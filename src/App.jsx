@@ -1051,99 +1051,100 @@ function App() {
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ type: "spring", duration: 0.5 }}
-            className="relative w-full max-w-md bg-[#12101f]/90 border border-white/10 rounded-3xl p-8 shadow-2xl z-10 overflow-hidden text-left"
+            className="inquiry-modal-card"
           >
+            {/* Ambient gradients */}
             <div className="absolute -right-16 -top-16 w-36 h-36 bg-purple-600/20 blur-[30px] rounded-full pointer-events-none" />
             <div className="absolute -left-16 -bottom-16 w-36 h-36 bg-pink-600/20 blur-[30px] rounded-full pointer-events-none" />
 
             <button
               onClick={() => setIsModalOpen(false)}
-              className="absolute top-4 right-4 text-white/50 hover:text-white transition-colors p-2 cursor-pointer"
+              className="absolute top-8 right-8 text-white/50 hover:text-white transition-colors p-2 cursor-pointer z-20"
             >
-              <X className="w-5 h-5" />
+              <X className="w-6 h-6" />
             </button>
 
             {!formSubmitted ? (
-              <form onSubmit={(e) => {
-                e.preventDefault();
-                setFormSubmitted(true);
-              }} className="space-y-4 relative z-10">
-                <div>
-                  <span className="text-[10px] font-bold tracking-widest text-purple-400 uppercase">
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  setFormSubmitted(true);
+                }}
+                className="relative z-10"
+              >
+                <div className="mb-8">
+                  <span className="text-[11px] font-bold tracking-[0.2em] text-purple-400 uppercase block mb-2">
                     Get Started
                   </span>
-                  <h3 className="font-serif text-2xl font-semibold text-white mt-1">
+                  <h3 className="font-serif text-3xl font-semibold text-white tracking-tight leading-snug">
                     Let's build your brand
                   </h3>
-                  <p className="text-white/60 text-xs mt-1">
+                  <p className="text-white/55 text-sm leading-loose mt-3">
                     Fill in your details below and our production team will get in touch.
                   </p>
                 </div>
 
-                <div className="space-y-3">
-                  <div>
-                    <label className="block text-[10px] font-bold text-white/60 uppercase tracking-wider mb-1">
-                      Your Name *
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={formData.name}
-                      onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                      placeholder="Jane Doe"
-                      className="w-full h-10 px-4 rounded-xl border border-white/10 bg-white/5 text-xs text-white focus:outline-none focus:border-purple-500 focus:bg-white/[0.08] transition-all"
-                    />
-                  </div>
+                <div className="mb-8">
+                  <label className="inquiry-label">
+                    Your Name *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.name}
+                    onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                    placeholder="Jane Doe"
+                    className="inquiry-input"
+                  />
+                </div>
 
-                  <div>
-                    <label className="block text-[10px] font-bold text-white/60 uppercase tracking-wider mb-1">
-                      Email Address *
-                    </label>
-                    <input
-                      type="email"
-                      required
-                      value={formData.email}
-                      onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                      placeholder="jane@company.com"
-                      className="w-full h-10 px-4 rounded-xl border border-white/10 bg-white/5 text-xs text-white focus:outline-none focus:border-purple-500 focus:bg-white/[0.08] transition-all"
-                    />
-                  </div>
+                <div className="mb-8">
+                  <label className="inquiry-label">
+                    Email Address *
+                  </label>
+                  <input
+                    type="email"
+                    required
+                    value={formData.email}
+                    onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                    placeholder="jane@company.com"
+                    className="inquiry-input"
+                  />
+                </div>
 
-                  <div>
-                    <label className="block text-[10px] font-bold text-white/60 uppercase tracking-wider mb-1">
-                      Service of Interest
-                    </label>
-                    <select
-                      value={formData.service}
-                      onChange={(e) => setFormData(prev => ({ ...prev, service: e.target.value }))}
-                      className="w-full h-10 px-4 rounded-xl border border-white/10 bg-[#12101f] text-xs text-white focus:outline-none focus:border-purple-500 transition-all cursor-pointer"
-                    >
-                      {SERVICES.map((service, idx) => (
-                        <option key={idx} value={service.title} className="bg-[#12101f]">
-                          {service.title}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                <div className="mb-8">
+                  <label className="inquiry-label">
+                    Service of Interest
+                  </label>
+                  <select
+                    value={formData.service}
+                    onChange={(e) => setFormData(prev => ({ ...prev, service: e.target.value }))}
+                    className="inquiry-select"
+                  >
+                    {SERVICES.map((service, idx) => (
+                      <option key={idx} value={service.title} className="bg-[#0c0817]">
+                        {service.title}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-                  <div>
-                    <label className="block text-[10px] font-bold text-white/60 uppercase tracking-wider mb-1">
-                      Brief Project Notes *
-                    </label>
-                    <textarea
-                      required
-                      rows={3}
-                      value={formData.message}
-                      onChange={(e) => setFormData(prev => ({ ...prev, message: e.target.value }))}
-                      placeholder="Tell us what you'd like to achieve..."
-                      className="w-full px-4 py-2.5 rounded-xl border border-white/10 bg-white/5 text-xs text-white focus:outline-none focus:border-purple-500 focus:bg-white/[0.08] transition-all resize-none"
-                    />
-                  </div>
+                <div className="mb-8">
+                  <label className="inquiry-label">
+                    Brief Project Notes *
+                  </label>
+                  <textarea
+                    required
+                    value={formData.message}
+                    onChange={(e) => setFormData(prev => ({ ...prev, message: e.target.value }))}
+                    placeholder="Tell us what you'd like to achieve..."
+                    className="inquiry-textarea"
+                  />
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full h-11 rounded-xl text-[10px] font-bold tracking-wider text-white uppercase bg-gradient-to-r from-purple-600 via-purple-500 to-pink-500 hover:from-purple-500 hover:to-pink-400 border border-white/10 shadow-[0_4px_20px_rgba(168,85,247,0.2)] hover:shadow-[0_4px_25px_rgba(168,85,247,0.35)] active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer mt-2"
+                  className="inquiry-submit-btn mt-10"
                 >
                   Submit Inquiry
                 </button>
@@ -1152,20 +1153,20 @@ function App() {
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="text-center py-6 flex flex-col items-center justify-center relative z-10"
+                className="text-center py-8 flex flex-col items-center justify-center relative z-10"
               >
-                <div className="w-12 h-12 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 mb-4 animate-bounce">
-                  <Check className="w-5 h-5" />
+                <div className="w-14 h-14 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 mb-6 animate-bounce">
+                  <Check className="w-6 h-6" />
                 </div>
-                <h3 className="font-serif text-xl font-semibold text-white mb-2">
+                <h3 className="font-serif text-2xl font-semibold text-white mb-3">
                   Thank you, {formData.name}!
                 </h3>
-                <p className="text-white/60 text-xs max-w-sm mx-auto mb-6">
+                <p className="text-white/60 text-sm leading-relaxed max-w-sm mx-auto mb-8">
                   We have received your inquiry about <span className="text-purple-300 font-semibold">{formData.service}</span>. Our production team will contact you within 24 hours.
                 </p>
                 <button
                   onClick={() => setIsModalOpen(false)}
-                  className="px-6 py-2 rounded-full border border-white/10 text-white/80 hover:text-white hover:bg-white/5 text-[10px] font-bold tracking-wider uppercase transition-all duration-300 cursor-pointer"
+                  className="px-8 py-3 rounded-full border border-white/10 text-white/80 hover:text-white hover:bg-white/5 text-[11px] font-bold tracking-widest uppercase transition-all duration-300 cursor-pointer"
                 >
                   Dismiss
                 </button>
