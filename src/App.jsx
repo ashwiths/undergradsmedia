@@ -50,6 +50,7 @@ import serviceHRSolutions from './assets/services/hr_solutions.png';
 const CASE_STUDIES = [
   {
     title: 'Transforming Saraas Group Into A Modern Brand With Tech, HR & Marketing Support',
+    shortTitle: 'Saraas Group Transformation',
     description: 'End-to-end business consulting and brand transformation for a multi-vertical enterprise. Delivered digital presence, HR restructuring, and marketing strategy.',
     image: projectSaraas,
     tags: ['Branding', 'Consulting', 'HR'],
@@ -58,6 +59,7 @@ const CASE_STUDIES = [
   },
   {
     title: 'Building YELO Into A Modern Coworking & Community Brand',
+    shortTitle: 'YELO Coworking & Community',
     description: 'YELO is a bike service app in Bhubaneswar, Odisha, offering doorstep two wheeler repair and maintenance. Customers can book services, track repairs, and pay online through the app and website.',
     image: projectYelo,
     tags: ['App Design', 'Branding', 'Marketing'],
@@ -66,6 +68,7 @@ const CASE_STUDIES = [
   },
   {
     title: 'Elevating Tantashala From Local Handloom Store To A Digital First Fashion Brand',
+    shortTitle: 'Tantashala Digital Fashion',
     description: 'Complete digital transformation of a traditional handloom business with e-commerce integration, social media strategy, and premium brand positioning.',
     image: projectTantashala,
     tags: ['E-Commerce', 'Fashion', 'Digital'],
@@ -74,6 +77,7 @@ const CASE_STUDIES = [
   },
   {
     title: 'UnderGrads X Government Initiatives',
+    shortTitle: 'Government Partnerships & Events',
     description: 'Partnered with government bodies to execute community development programs, event management, and public outreach campaigns at scale.',
     image: projectGovt,
     tags: ['Government', 'Events', 'Outreach'],
@@ -175,211 +179,122 @@ const cardVariants = {
 
 /* ===== Case Studies Section Component ===== */
 function CaseStudiesSection() {
-  const sectionRef = useRef(null);
-  const [isVisible, setIsVisible] = useState(false);
-  const [clickedCard, setClickedCard] = useState(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.1 }
-    );
-    if (sectionRef.current) observer.observe(sectionRef.current);
-    return () => observer.disconnect();
-  }, []);
-
-  // Image parallax handler — max 8px translation
-  const handleMouseMove = (e, cardEl) => {
-    if (!cardEl) return;
-    const rect = cardEl.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width - 0.5) * 2; // -1 to 1
-    const y = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
-    const img = cardEl.querySelector('.case-study-image');
-    if (img) {
-      img.style.transform = `scale(1.05) translate(${x * -8}px, ${y * -8}px)`;
-    }
-  };
-
-  const handleMouseLeave = (cardEl) => {
-    if (!cardEl) return;
-    const img = cardEl.querySelector('.case-study-image');
-    if (img) {
-      img.style.transform = '';
-    }
-  };
-
-  // Bento layout: Row 1 = large(65%) + small(35%), Row 2 = small(35%) + large(65%)
-  const getCardAnimation = (index) => {
-    switch (index) {
-      case 0: return 'animate__fadeInLeft';
-      case 1: return 'animate__fadeInRight';
-      case 2: return 'animate__fadeInUp';
-      case 3: return 'animate__fadeInUp';
-      default: return 'animate__fadeInUp';
-    }
-  };
-
-  const getCardDelay = (index) => `${0.2 + index * 0.15}s`;
-
-
+  const [activeIndex, setActiveIndex] = useState(0);
+  const featuredProject = CASE_STUDIES[activeIndex];
 
   return (
-    <section
-      id="work"
-      ref={sectionRef}
-      className="relative z-10 w-full overflow-hidden"
-      style={{
-        background: '#0c0817',
-        paddingTop: '120px',
-        paddingBottom: '120px',
-      }}
-    >
+    <section id="work" className="portfolio-section">
       {/* Background accents */}
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-purple-500/20 to-transparent" />
-      <div className="absolute top-1/3 right-0 w-[400px] h-[400px] bg-purple-900/8 rounded-full blur-[140px] pointer-events-none" />
-      <div className="absolute bottom-1/3 left-0 w-[350px] h-[350px] bg-pink-900/8 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute top-1/3 right-0 w-[400px] h-[400px] bg-purple-900/5 rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute bottom-1/3 left-0 w-[350px] h-[350px] bg-pink-900/5 rounded-full blur-[120px] pointer-events-none" />
 
-      {/* Container */}
-      <div
-        className="relative z-10"
-        style={{ maxWidth: '1400px', width: '100%', margin: '0 auto', paddingLeft: '32px', paddingRight: '32px' }}
-      >
-
+      <div className="portfolio-container">
         {/* Section Header */}
-        <div style={{ textAlign: 'center', marginBottom: '80px' }}>
-          {/* Small section label */}
-          <span
-            className={`font-sans ${isVisible ? 'animate__animated animate__fadeInUp' : 'opacity-0'}`}
-            style={{
-              display: 'block',
-              fontSize: '11px',
-              fontWeight: 700,
-              letterSpacing: '0.2em',
-              textTransform: 'uppercase',
-              color: '#a78bfa',
-              marginBottom: '16px',
-              animationDuration: '0.8s',
-              animationFillMode: 'both',
-            }}
-          >
-            Case Studies
-          </span>
-
-          <h2
-            className={`font-serif ${isVisible ? 'animate__animated animate__fadeInUp' : 'opacity-0'}`}
-            style={{
-              fontWeight: 600,
-              fontSize: 'clamp(36px, 5vw, 52px)',
-              color: '#fff',
-              lineHeight: 1.15,
-              letterSpacing: '-0.01em',
-              marginBottom: '20px',
-              animationDuration: '1s',
-              animationDelay: '0.1s',
-              animationFillMode: 'both',
-            }}
-          >
-            Crafting success with{' '}
-            <span style={{
-              background: 'linear-gradient(90deg, #a78bfa, #d946ef, #ec4899)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-            }}>
-              our clients
+        <div className="portfolio-header">
+          <div>
+            <span className="font-sans text-xs font-bold tracking-[0.2em] uppercase text-purple-400 block mb-2">
+              Selected Work
             </span>
-          </h2>
-          <p
-            className={`font-sans ${isVisible ? 'animate__animated animate__fadeInUp' : 'opacity-0'}`}
-            style={{
-              color: 'rgba(255,255,255,0.55)',
-              fontSize: 'clamp(15px, 1.8vw, 18px)',
-              lineHeight: 1.6,
-              maxWidth: '560px',
-              margin: '0 auto',
-              animationDuration: '1s',
-              animationDelay: '0.2s',
-              animationFillMode: 'both',
-            }}
-          >
-            Showcasing collaborations that blend creativity, strategy and innovation into impactful results.
-          </p>
+            <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-white font-medium tracking-tight">
+              Case Studies
+            </h2>
+          </div>
         </div>
 
-        {/* Bento Projects Grid */}
-        <div className="case-studies-grid">
-          {CASE_STUDIES.map((project, index) => (
-            <div
-              key={index}
-              className={`case-study-card group ${isVisible ? `animate__animated ${getCardAnimation(index)}` : 'opacity-0'}`}
-              style={{
-                animationDelay: getCardDelay(index),
-                animationDuration: '0.8s',
-                animationFillMode: 'both',
-              }}
-              onMouseMove={(e) => handleMouseMove(e, e.currentTarget)}
-              onMouseLeave={(e) => handleMouseLeave(e.currentTarget)}
-            >
-              {/* Image Container */}
-              <div className="case-study-image-wrapper">
-                <img
-                  src={project.image}
-                  alt={project.title}
-                  className="case-study-image"
-                  loading="lazy"
-                />
-                {/* Overlay gradient */}
-                <div className="case-study-overlay" />
-              </div>
-
-              {/* Content overlay */}
-              <div className="case-study-content">
-                {/* Tags */}
-                <div className="case-study-tags">
-                  {project.tags.map((tag, i) => (
-                    <span key={i} className="case-study-tag">{tag}</span>
+        {/* Split Layout */}
+        <div className="portfolio-split">
+          {/* Left Side: Content */}
+          <div className="portfolio-details">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeIndex}
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -15 }}
+                transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <div className="portfolio-tags">
+                  {featuredProject.tags.map((tag, i) => (
+                    <span key={i} className="portfolio-tag">
+                      {tag}
+                    </span>
                   ))}
                 </div>
 
-                {/* Title */}
-                <h3 className="font-serif case-study-title">
-                  {project.title}
+                <h3 className="portfolio-title">
+                  {featuredProject.title}
                 </h3>
 
-                {/* Description — appears on hover */}
-                <p className="font-sans case-study-description">
-                  {project.description}
+                <p className="portfolio-description">
+                  {featuredProject.description}
                 </p>
 
-                {/* CTA Button */}
-                <button
-                  className="case-study-cta"
-                  onMouseEnter={(e) => {
-                    e.currentTarget.classList.add('animate__animated', 'animate__pulse');
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.classList.remove('animate__animated', 'animate__pulse');
-                  }}
-                  onClick={(e) => {
-                    e.currentTarget.classList.remove('animate__pulse');
-                    e.currentTarget.classList.add('animate__animated', 'animate__rubberBand');
-                    setClickedCard(index);
-                    setTimeout(() => {
-                      e.currentTarget.classList.remove('animate__animated', 'animate__rubberBand');
-                      setClickedCard(null);
-                    }, 800);
-                  }}
+                <div style={{ marginTop: '36px' }}>
+                  <button className="portfolio-cta">
+                    <span>See case study</span>
+                    <ArrowRight style={{ width: '16px', height: '16px' }} />
+                  </button>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+          {/* Right Side: Image */}
+          <div className="relative w-full">
+            <div className="portfolio-image-frame">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeIndex}
+                  initial={{ opacity: 0, scale: 1.05 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.98 }}
+                  transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+                  className="absolute inset-0 w-full h-full"
                 >
-                  <span>See case study</span>
-                  <ArrowRight style={{ width: '16px', height: '16px' }} />
-                </button>
-              </div>
+                  <img
+                    src={featuredProject.image}
+                    alt={featuredProject.title}
+                    className="portfolio-image"
+                  />
+                  <div className="portfolio-vignette" />
+                </motion.div>
+              </AnimatePresence>
             </div>
-          ))}
+          </div>
+        </div>
+
+        {/* Project List */}
+        <div className="portfolio-list">
+          {CASE_STUDIES.map((project, index) => {
+            const isActive = index === activeIndex;
+            return (
+              <div
+                key={index}
+                onMouseEnter={() => setActiveIndex(index)}
+                onClick={() => setActiveIndex(index)}
+                className="portfolio-list-item"
+                style={{ opacity: isActive ? 1 : 0.3 }}
+              >
+                <div className="portfolio-list-left">
+                  <span className="portfolio-list-index">
+                    {`0${index + 1}`}
+                  </span>
+                  <h4 className="portfolio-list-title">
+                    {project.shortTitle}
+                  </h4>
+                </div>
+                <div className="portfolio-list-right">
+                  <span className="portfolio-list-tags">
+                    {project.tags.join('  •  ')}
+                  </span>
+                  <div className="portfolio-list-arrow">
+                    <ArrowRight style={{ width: '18px', height: '18px' }} />
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>
@@ -406,16 +321,15 @@ function AboutSection() {
         className="relative z-10 w-full flex flex-col items-center text-center"
         style={{ maxWidth: '1100px', margin: '0 auto', paddingLeft: '32px', paddingRight: '32px' }}
       >
-        {/* Section Tagline */}
-        <p 
-          className="w-full text-center font-sans text-sm sm:text-base font-bold tracking-[0.3em] text-purple-400 uppercase"
+        <p
+          className="w-full text-center font-sans text-lg sm:text-2xl font-bold tracking-[0.3em] text-purple-400 uppercase"
           style={{ marginBottom: '48px' }}
         >
           Partner For Digital Solutions
         </p>
 
         {/* Tab Buttons — centered, with proper underline indicator */}
-        <div 
+        <div
           className="relative flex items-center justify-center gap-2 sm:gap-6 w-full"
           style={{ marginBottom: '80px', marginTop: '24px' }}
         >
@@ -426,15 +340,14 @@ function AboutSection() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`relative pb-3 px-2 sm:px-5 font-sans text-sm sm:text-base font-bold tracking-[0.18em] uppercase transition-colors duration-300 cursor-pointer ${
-                activeTab === tab ? 'text-white' : 'text-white/35 hover:text-white/65'
-              }`}
+              className={`relative pb-3 px-2.5 sm:px-5 font-sans text-base sm:text-xl font-bold tracking-[0.18em] uppercase transition-colors duration-300 cursor-pointer ${activeTab === tab ? 'text-white' : 'text-white/35 hover:text-white/65'
+                }`}
             >
               {tab}
               {activeTab === tab && (
                 <motion.div
                   layoutId="aboutTabLine"
-                  className="absolute bottom-[-1px] left-2 sm:left-5 right-2 sm:right-5 h-[2px] bg-purple-500 shadow-[0_0_10px_rgba(168,85,247,0.7)]"
+                  className="absolute bottom-[-1px] left-2.5 sm:left-5 right-2.5 sm:right-5 h-[2.5px] bg-purple-500 shadow-[0_0_10px_rgba(168,85,247,0.7)]"
                   transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                 />
               )}
@@ -475,7 +388,7 @@ function AboutSection() {
                   style={{ gap: '24px', maxWidth: '840px' }}
                 >
                   {[
-                    { val: '5+',  label: 'Years in Business' },
+                    { val: '5+', label: 'Years in Business' },
                     { val: '50+', label: 'Completed Projects' },
                     { val: '32%', label: 'Average KPI Improvement' },
                   ].map((stat, i) => (
@@ -561,149 +474,132 @@ function AboutSection() {
 
 
 /* ===== Footer Component ===== */
+/* ===== Footer Component ===== */
 function Footer({ onOpenModal }) {
   const currentYear = new Date().getFullYear();
   return (
-    <footer className="relative z-10 w-full bg-[#0c0817] pt-20 pb-12 border-t border-white/[0.04] text-white">
-      <div
-        className="relative z-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8 mb-16"
-        style={{ maxWidth: '1400px', width: '100%', margin: '0 auto', paddingLeft: '32px', paddingRight: '32px' }}
-      >
-        {/* Brand Column */}
-        <div className="lg:col-span-4 flex flex-col gap-6 text-left">
-          <a href="#" className="flex items-center gap-2.5 group w-fit">
-            <div className="w-8 h-8 rounded-lg border border-white/10 bg-white/5 flex items-center justify-center transition-transform duration-300 group-hover:scale-105 shadow-inner">
-              <Sparkles className="w-4 h-4 text-orange-500 animate-pulse" />
+    <footer className="site-footer">
+      <div className="footer-container">
+        {/* Main 5-Column Grid */}
+        <div className="footer-grid">
+          {/* Column 1: Brand / Description / Socials */}
+          <div className="footer-brand-col">
+            <a href="#" className="flex items-center gap-2.5 group w-fit">
+              <div className="w-8 h-8 rounded-lg border border-white/10 bg-white/5 flex items-center justify-center transition-transform duration-300 group-hover:scale-105 shadow-inner">
+                <Sparkles className="w-4 h-4 text-purple-400 animate-pulse" />
+              </div>
+              <span className="font-serif font-medium text-[15px] uppercase tracking-[0.18em] transition-opacity duration-300 group-hover:opacity-90 bg-gradient-to-r from-white to-purple-400 bg-clip-text text-transparent">
+                UNDERGRADSMEDIA
+              </span>
+            </a>
+
+            <p className="footer-brand-description">
+              High-speed, premium, AI-orchestrated consulting and execution for modern business development, design, and media production.
+            </p>
+
+            {/* Social Icons Row with Circular Hover */}
+            <div className="footer-socials-row">
+              <a href="#" className="footer-social-icon" aria-label="Twitter">
+                <svg className="w-4.5 h-4.5 fill-current" viewBox="0 0 24 24">
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                </svg>
+              </a>
+              <a href="#" className="footer-social-icon" aria-label="Facebook">
+                <svg className="w-4.5 h-4.5 fill-current" viewBox="0 0 24 24">
+                  <path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c4.56-.93 8-4.96 8-9.75z" />
+                </svg>
+              </a>
+              <a href="#" className="footer-social-icon" aria-label="YouTube">
+                <svg className="w-4.5 h-4.5 fill-current" viewBox="0 0 24 24">
+                  <path d="M23.498 6.163a3.003 3.003 0 0 0-2.11-2.107C19.518 3.5 12 3.5 12 3.5s-7.518 0-9.388.556a3.003 3.003 0 0 0-2.11 2.107C0 8.033 0 12 0 12s0 3.967.502 5.837a3.003 3.003 0 0 0 2.11 2.107C4.482 20.5 12 20.5 12 20.5s7.518 0 9.388-.556a3.003 3.003 0 0 0 2.11-2.107C24 15.967 24 12 24 12s0-3.967-.502-5.837zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+                </svg>
+              </a>
+              <a href="#" className="footer-social-icon" aria-label="LinkedIn">
+                <svg className="w-4.5 h-4.5 fill-current" viewBox="0 0 24 24">
+                  <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+                </svg>
+              </a>
             </div>
-            <span
-              className="font-serif font-semibold text-[20px] lowercase tracking-tight transition-opacity duration-300 group-hover:opacity-90"
-              style={{
-                background: 'linear-gradient(135deg, #f97316 0%, #ec4899 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-              }}
-            >
-              antigravity
-            </span>
-          </a>
-          
-          <p className="font-sans text-white/50 text-[13px] leading-relaxed max-w-xs">
-            High-speed, premium, AI-orchestrated consulting and execution for modern business development, design, and media production.
-          </p>
-          
-          {/* Social Icons */}
-          <div className="flex items-center gap-4 text-white/40">
-            <a href="#" className="hover:text-purple-400 transition-colors duration-300" aria-label="Twitter">
-              <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
-                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-              </svg>
-            </a>
-            <a href="#" className="hover:text-purple-400 transition-colors duration-300" aria-label="Facebook">
-              <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
-                <path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c4.56-.93 8-4.96 8-9.75z" />
-              </svg>
-            </a>
-            <a href="#" className="hover:text-purple-400 transition-colors duration-300" aria-label="YouTube">
-              <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
-                <path d="M23.498 6.163a3.003 3.003 0 0 0-2.11-2.107C19.518 3.5 12 3.5 12 3.5s-7.518 0-9.388.556a3.003 3.003 0 0 0-2.11 2.107C0 8.033 0 12 0 12s0 3.967.502 5.837a3.003 3.003 0 0 0 2.11 2.107C4.482 20.5 12 20.5 12 20.5s7.518 0 9.388-.556a3.003 3.003 0 0 0 2.11-2.107C24 15.967 24 12 24 12s0-3.967-.502-5.837zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
-              </svg>
-            </a>
-            <a href="#" className="hover:text-purple-400 transition-colors duration-300" aria-label="LinkedIn">
-              <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
-                <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
-              </svg>
-            </a>
+          </div>
+
+          {/* Column 2: Services */}
+          <div className="footer-col">
+            <span className="footer-col-title">Services</span>
+            <ul className="footer-links-list">
+              <li><a href="#services" className="footer-link">Web Dev</a></li>
+              <li><a href="#services" className="footer-link">Software Dev</a></li>
+              <li><a href="#services" className="footer-link">Mobile Apps</a></li>
+              <li><a href="#services" className="footer-link">E-Commerce</a></li>
+              <li><a href="#services" className="footer-link">UI/UX Design</a></li>
+              <li><a href="#services" className="footer-link">Talent & HR</a></li>
+            </ul>
+          </div>
+
+          {/* Column 3: Company */}
+          <div className="footer-col">
+            <span className="footer-col-title">Company</span>
+            <ul className="footer-links-list">
+              <li><a href="#about" className="footer-link">About Us</a></li>
+              <li><a href="#work" className="footer-link">Our Clients</a></li>
+              <li><a href="#work" className="footer-link">Case Studies</a></li>
+              <li><a href="#" className="footer-link">Our Blog</a></li>
+              <li><a href="#" className="footer-link">Careers <span className="text-[9px] font-bold text-pink-500 bg-pink-500/10 px-1.5 py-0.5 rounded ml-1">New</span></a></li>
+              <li><a href="#" className="footer-link">Brand Assets</a></li>
+            </ul>
+          </div>
+
+          {/* Column 4: Resources */}
+          <div className="footer-col">
+            <span className="footer-col-title">Resources</span>
+            <ul className="footer-links-list">
+              <li><button onClick={onOpenModal} className="footer-link text-left cursor-pointer">Help Centre</button></li>
+              <li><a href="#" className="footer-link">API Reference</a></li>
+              <li><a href="#" className="footer-link">Privacy Policy</a></li>
+              <li><a href="#" className="footer-link">Terms of Service</a></li>
+            </ul>
+          </div>
+
+          {/* Column 5: Contact / App Download Badges */}
+          <div className="footer-col">
+            <span className="footer-col-title">Contact</span>
+            <ul className="footer-links-list mb-3">
+              <li><button onClick={onOpenModal} className="footer-link text-left cursor-pointer">Support</button></li>
+              <li><a href="mailto:hello@undergradsmedia.com" className="footer-contact-email">hello@undergradsmedia.com</a></li>
+            </ul>
+
+            {/* Vertically aligned App store badges with gap-12 */}
+            <div className="footer-badges-wrapper">
+              <a href="#" className="footer-badge-btn group">
+                <svg className="w-5 h-5 text-white/70 group-hover:text-white transition-colors" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 4.17c.66-.81 1.11-1.93.99-3.06-1 .04-2.22.67-2.94 1.5-.63.73-1.18 1.87-1.03 2.98 1.12.09 2.27-.57 2.98-1.42z" />
+                </svg>
+                <div className="flex flex-col items-start leading-[1]">
+                  <span className="text-[7px] text-white/40 uppercase">Download on the</span>
+                  <span className="text-[10px] font-bold text-white/80 group-hover:text-white transition-colors">App Store</span>
+                </div>
+              </a>
+
+              <a href="#" className="footer-badge-btn group">
+                <svg className="w-5 h-5 text-white/70 group-hover:text-white transition-colors" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M3.609 1.814L13.783 12 3.609 22.186A2.245 2.245 0 0 1 3 20.598V3.402c0-.62.227-1.192.609-1.588zm1.214-.803c.164-.067.345-.104.536-.104.436 0 .83.189 1.109.492l10.87 6.275L14.77 13 4.823 1.011zm0 21.978L14.77 13l2.568 5.34-10.87 6.275a1.272 1.272 0 0 1-1.109.492c-.191 0-.372-.037-.536-.104L4.823 22.989zm13.11-12.72l3.418-1.974c.48-.277.809-.796.809-1.388s-.329-1.111-.809-1.388L18.42 5.861 15.772 13l2.648 1.139z" />
+                </svg>
+                <div className="flex flex-col items-start leading-[1]">
+                  <span className="text-[7px] text-white/40 uppercase">Get it on</span>
+                  <span className="text-[10px] font-bold text-white/80 group-hover:text-white transition-colors">Google Play</span>
+                </div>
+              </a>
+            </div>
           </div>
         </div>
 
-        {/* Services Column */}
-        <div className="lg:col-span-2 text-left flex flex-col gap-4">
-          <span className="font-sans text-xs font-bold text-white/90 tracking-widest uppercase">
-            Services
-          </span>
-          <ul className="flex flex-col gap-2.5 text-[13px] text-white/50 font-sans">
-            <li><a href="#services" className="hover:text-purple-400 hover:translate-x-0.5 transition-all duration-300 inline-block">Web Dev</a></li>
-            <li><a href="#services" className="hover:text-purple-400 hover:translate-x-0.5 transition-all duration-300 inline-block">Software Dev</a></li>
-            <li><a href="#services" className="hover:text-purple-400 hover:translate-x-0.5 transition-all duration-300 inline-block">Mobile Apps</a></li>
-            <li><a href="#services" className="hover:text-purple-400 hover:translate-x-0.5 transition-all duration-300 inline-block">E-Commerce</a></li>
-            <li><a href="#services" className="hover:text-purple-400 hover:translate-x-0.5 transition-all duration-300 inline-block">UI/UX Design</a></li>
-            <li><a href="#services" className="hover:text-purple-400 hover:translate-x-0.5 transition-all duration-300 inline-block">Talent & HR</a></li>
-          </ul>
-        </div>
-
-        {/* Company Column */}
-        <div className="lg:col-span-2 text-left flex flex-col gap-4">
-          <span className="font-sans text-xs font-bold text-white/90 tracking-widest uppercase">
-            Company
-          </span>
-          <ul className="flex flex-col gap-2.5 text-[13px] text-white/50 font-sans">
-            <li><a href="#about" className="hover:text-purple-400 hover:translate-x-0.5 transition-all duration-300 inline-block">About Us</a></li>
-            <li><a href="#work" className="hover:text-purple-400 hover:translate-x-0.5 transition-all duration-300 inline-block">Our Clients</a></li>
-            <li><a href="#work" className="hover:text-purple-400 hover:translate-x-0.5 transition-all duration-300 inline-block">Case Studies</a></li>
-            <li><a href="#" className="hover:text-purple-400 hover:translate-x-0.5 transition-all duration-300 inline-block">Our Blog</a></li>
-            <li><a href="#" className="hover:text-purple-400 hover:translate-x-0.5 transition-all duration-300 inline-block">Careers <span className="text-[9px] font-bold text-pink-500 bg-pink-500/10 px-1.5 py-0.5 rounded ml-1">New</span></a></li>
-            <li><a href="#" className="hover:text-purple-400 hover:translate-x-0.5 transition-all duration-300 inline-block">Brand Assets</a></li>
-          </ul>
-        </div>
-
-        {/* Resources Column */}
-        <div className="lg:col-span-2 text-left flex flex-col gap-4">
-          <span className="font-sans text-xs font-bold text-white/90 tracking-widest uppercase">
-            Resources
-          </span>
-          <ul className="flex flex-col gap-2.5 text-[13px] text-white/50 font-sans">
-            <li><button onClick={onOpenModal} className="hover:text-purple-400 text-left hover:translate-x-0.5 transition-all duration-300 inline-block cursor-pointer">Help Centre</button></li>
-            <li><a href="#" className="hover:text-purple-400 hover:translate-x-0.5 transition-all duration-300 inline-block">API Reference</a></li>
-            <li><a href="#" className="hover:text-purple-400 hover:translate-x-0.5 transition-all duration-300 inline-block">Privacy Policy</a></li>
-            <li><a href="#" className="hover:text-purple-400 hover:translate-x-0.5 transition-all duration-300 inline-block">Terms of Service</a></li>
-          </ul>
-        </div>
-
-        {/* Contact Column */}
-        <div className="lg:col-span-2 text-left flex flex-col gap-4">
-          <span className="font-sans text-xs font-bold text-white/90 tracking-widest uppercase">
-            Contact
-          </span>
-          <ul className="flex flex-col gap-2 text-[13px] text-white/50 font-sans mb-3">
-            <li><button onClick={onOpenModal} className="hover:text-purple-400 text-left hover:translate-x-0.5 transition-all duration-300 inline-block cursor-pointer">Support</button></li>
-            <li><a href="mailto:hello@antigravity.media" className="text-purple-400 hover:text-purple-300 hover:translate-x-0.5 transition-all duration-300 inline-block font-semibold">hello@antigravity.media</a></li>
-          </ul>
-
-          {/* Download badges */}
-          <div className="flex flex-col gap-2 w-full max-w-[130px]">
-            <a href="#" className="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg py-1.5 px-3 transition-colors duration-300 group shadow-inner">
-              <svg className="w-5 h-5 text-white/70 group-hover:text-white transition-colors" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 4.17c.66-.81 1.11-1.93.99-3.06-1 .04-2.22.67-2.94 1.5-.63.73-1.18 1.87-1.03 2.98 1.12.09 2.27-.57 2.98-1.42z" />
-              </svg>
-              <div className="flex flex-col items-start leading-[1]">
-                <span className="text-[7px] text-white/40 uppercase">Download on the</span>
-                <span className="text-[10px] font-bold text-white/80 group-hover:text-white transition-colors">App Store</span>
-              </div>
-            </a>
-            
-            <a href="#" className="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg py-1.5 px-3 transition-colors duration-300 group shadow-inner">
-              <svg className="w-5 h-5 text-white/70 group-hover:text-white transition-colors" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M3.609 1.814L13.783 12 3.609 22.186A2.245 2.245 0 0 1 3 20.598V3.402c0-.62.227-1.192.609-1.588zm1.214-.803c.164-.067.345-.104.536-.104.436 0 .83.189 1.109.492l10.87 6.275L14.77 13 4.823 1.011zm0 21.978L14.77 13l2.568 5.34-10.87 6.275a1.272 1.272 0 0 1-1.109.492c-.191 0-.372-.037-.536-.104L4.823 22.989zm13.11-12.72l3.418-1.974c.48-.277.809-.796.809-1.388s-.329-1.111-.809-1.388L18.42 5.861 15.772 13l2.648 1.139z" />
-              </svg>
-              <div className="flex flex-col items-start leading-[1]">
-                <span className="text-[7px] text-white/40 uppercase">Get it on</span>
-                <span className="text-[10px] font-bold text-white/80 group-hover:text-white transition-colors">Google Play</span>
-              </div>
-            </a>
+        {/* Footer Bottom Legal Bar */}
+        <div className="footer-bottom-bar">
+          <span>&copy; {currentYear} UnderGradsMedia. All rights reserved.</span>
+          <div className="footer-bottom-links">
+            <a href="#" className="footer-bottom-link">Security</a>
+            <a href="#" className="footer-bottom-link">Cookies</a>
+            <a href="#" className="footer-bottom-link">Sitemap</a>
           </div>
-        </div>
-      </div>
-      
-      {/* Bottom Legal */}
-      <div 
-        className="pt-8 border-t border-white/[0.04] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-white/30"
-        style={{ maxWidth: '1400px', width: '100%', margin: '0 auto', paddingLeft: '32px', paddingRight: '32px' }}
-      >
-        <span>&copy; {currentYear} Antigravity. All rights reserved.</span>
-        <div className="flex items-center gap-6">
-          <a href="#" className="hover:text-purple-400 transition-colors">Security</a>
-          <a href="#" className="hover:text-purple-400 transition-colors">Cookies</a>
-          <a href="#" className="hover:text-purple-400 transition-colors">Sitemap</a>
         </div>
       </div>
     </footer>
@@ -732,20 +628,13 @@ function App() {
           className="h-full flex items-center justify-between border-l border-r border-white/[0.08]"
           style={{ maxWidth: '1400px', width: '100%', margin: '0 auto', paddingLeft: '32px', paddingRight: '32px' }}
         >
-          {/* Logo with orange/pink gradient script style */}
+          {/* Logo with purple/white gradient script style */}
           <a href="#" className="flex items-center gap-2.5 group">
             <div className="w-8 h-8 rounded-lg border border-white/10 bg-white/5 flex items-center justify-center transition-transform duration-300 group-hover:scale-105 shadow-inner">
-              <Sparkles className="w-4 h-4 text-orange-500 animate-pulse" />
+              <Sparkles className="w-4 h-4 text-purple-400 animate-pulse" />
             </div>
-            <span
-              className="font-serif font-semibold text-[20px] lowercase tracking-tight transition-opacity duration-300 group-hover:opacity-90"
-              style={{
-                background: 'linear-gradient(135deg, #f97316 0%, #ec4899 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-              }}
-            >
-              antigravity
+            <span className="font-serif font-medium text-[15px] uppercase tracking-[0.18em] transition-opacity duration-300 group-hover:opacity-90 bg-gradient-to-r from-white to-purple-400 bg-clip-text text-transparent">
+              UNDERGRADSMEDIA
             </span>
           </a>
 
@@ -784,9 +673,10 @@ function App() {
                   setIsModalOpen(true);
                   setFormSubmitted(false);
                 }}
-                className="h-10 px-6 inline-flex items-center justify-center rounded-full text-xs font-bold tracking-wider text-white uppercase bg-purple-600 hover:bg-purple-700 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 cursor-pointer shadow-[0_4px_12px_rgba(124,58,237,0.2)] hover:shadow-[0_4px_18px_rgba(124,58,237,0.35)]"
+                className="nav-cta-btn"
               >
-                Let's Talk
+                <span>Let's Start</span>
+                <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>
 
@@ -830,9 +720,10 @@ function App() {
                 setFormSubmitted(false);
                 setMobileMenuOpen(false);
               }}
-              className="w-full text-center py-3 rounded-full text-xs font-bold tracking-widest text-white uppercase bg-purple-600 hover:bg-purple-700 transition-all shadow-md cursor-pointer"
+              className="nav-cta-btn w-full justify-center"
             >
-              Let's Talk
+              <span>Let's Start</span>
+              <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </motion.div>
         )}
@@ -883,38 +774,11 @@ function App() {
                   setIsModalOpen(true);
                   setFormSubmitted(false);
                 }}
-                className="group relative inline-flex items-center justify-center gap-3 px-8 rounded-full cursor-pointer overflow-hidden transition-all duration-[300ms] hover:scale-[1.03] hover:-translate-y-[2px] active:scale-[0.97]"
-                style={{
-                  height: '48px',
-                  fontFamily: 'inherit',
-                  fontWeight: 600,
-                  fontSize: '15px',
-                  letterSpacing: '0.03em',
-                  color: '#fff',
-                  background: 'linear-gradient(135deg, rgba(192,132,252,0.48) 0%, rgba(236,72,153,0.48) 100%)',
-                  backdropFilter: 'blur(16px)',
-                  WebkitBackdropFilter: 'blur(16px)',
-                  border: '1px solid rgba(192,132,252,0.6)',
-                  boxShadow: '0 4px 30px rgba(168,85,247,0.38), inset 0 1px 0 rgba(255,255,255,0.15)',
-                  transition: 'transform 300ms ease, box-shadow 300ms ease, background 300ms ease',
-                }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.boxShadow = '0 10px 44px rgba(168,85,247,0.68), 0 0 0 1px rgba(192,132,252,0.72), inset 0 1px 0 rgba(255,255,255,0.24)';
-                  e.currentTarget.style.background = 'linear-gradient(135deg, rgba(200,140,255,0.65) 0%, rgba(244,85,165,0.65) 100%)';
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.boxShadow = '0 4px 30px rgba(168,85,247,0.38), inset 0 1px 0 rgba(255,255,255,0.15)';
-                  e.currentTarget.style.background = 'linear-gradient(135deg, rgba(192,132,252,0.48) 0%, rgba(236,72,153,0.48) 100%)';
-                }}
+                className="hero-cta-btn group"
               >
-                {/* Inner gradient overlay for depth */}
-                <span
-                  className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
-                  style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.07) 0%, transparent 60%)' }}
-                />
-                <Sparkles className="w-5 h-5 text-purple-200 group-hover:text-white transition-colors duration-300 relative z-10 flex-shrink-0" />
+                <Sparkles className="w-4.5 h-4.5 text-purple-200 group-hover:text-white transition-colors duration-300 relative z-10 flex-shrink-0" />
                 <span className="relative z-10">Let's Build Together</span>
-                <ArrowRight className="w-5 h-5 text-pink-200 group-hover:text-white group-hover:translate-x-1 transition-all duration-300 relative z-10 flex-shrink-0" />
+                <ArrowRight className="w-4.5 h-4.5 text-pink-200 group-hover:text-white group-hover:translate-x-1 transition-all duration-300 relative z-10 flex-shrink-0" />
               </button>
             </div>
           </motion.div>
@@ -927,111 +791,8 @@ function App() {
         </div>
       </section>
 
-
-
-      {/* Services Section — Rebuilt */}
-      <section
-        id="services"
-        className="relative z-10 w-full overflow-hidden"
-        style={{
-          background: '#0c0817',
-          paddingTop: '120px',
-          paddingBottom: '120px',
-        }}
-      >
-        {/* Ambient Glows */}
-        <div className="absolute top-1/4 left-10 w-[300px] h-[300px] bg-purple-900/10 rounded-full blur-[100px] pointer-events-none" />
-        <div className="absolute bottom-1/4 right-10 w-[350px] h-[350px] bg-pink-900/10 rounded-full blur-[120px] pointer-events-none" />
-
-        {/* Section Container — 1400px max, centered, responsive padding */}
-        <div
-          className="relative z-10"
-          style={{ maxWidth: '1400px', width: '100%', margin: '0 auto', paddingLeft: '32px', paddingRight: '32px' }}
-        >
-
-          {/* Section Header — Center aligned */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            style={{ textAlign: 'center', marginBottom: '80px' }}
-          >
-            <h2 className="font-serif" style={{ fontWeight: 600, fontSize: 'clamp(36px, 5vw, 52px)', color: '#ffffff', lineHeight: 1.15, letterSpacing: '-0.01em', marginBottom: '16px' }}>
-              Our Services
-            </h2>
-            <p className="font-sans" style={{ color: 'rgba(255, 255, 255, 0.55)', fontSize: 'clamp(15px, 1.8vw, 18px)', lineHeight: 1.6, maxWidth: '560px', margin: '0 auto' }}>
-              Comprehensive digital solutions tailored to elevate your business.
-            </p>
-          </motion.div>
-
-          {/* Services Grid */}
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.1 }}
-            className="services-grid"
-          >
-            {SERVICES.map((service, index) => {
-              const ServiceIcon = service.icon;
-              return (
-                <motion.div
-                  key={index}
-                  variants={cardVariants}
-                  className="service-card group"
-                  onClick={() => {
-                    setFormData({
-                      name: '',
-                      email: '',
-                      company: '',
-                      service: service.title,
-                      message: ''
-                    });
-                    setIsModalOpen(true);
-                    setFormSubmitted(false);
-                  }}
-                >
-                  {/* Hover background image & overlay */}
-                  <div
-                    className="service-card-bg"
-                    style={{ backgroundImage: `url(${service.image})` }}
-                  />
-                  <div className="service-card-overlay" />
-
-                  {/* Card Content Wrapper */}
-                  <div className="service-card-content">
-                    {/* Top Row: Number */}
-                    <span className="service-card-number font-serif">
-                      {service.number}
-                    </span>
-
-                    {/* Middle Section: Badge & Description */}
-                    <div className="service-card-middle">
-                      <span className="service-card-badge font-sans">
-                        {service.badge}
-                      </span>
-                      <p className="service-card-description font-sans">
-                        {service.description}
-                      </p>
-                    </div>
-
-                    {/* Bottom Row: Icon & Arrow Button */}
-                    <div className="service-card-bottom">
-                      <div className="service-card-icon">
-                        <ServiceIcon style={{ width: '20px', height: '20px' }} />
-                      </div>
-                      <div className="service-card-arrow">
-                        <ArrowRight style={{ width: '16px', height: '16px' }} />
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </motion.div>
-        </div>
-      </section>
+      {/* ===== About Section ===== */}
+      <AboutSection />
 
       {/* Trusted Partners — Full-Width White Marquee Banner */}
       <div
@@ -1165,11 +926,113 @@ function App() {
         </div>
       </div>
 
+      {/* Services Section — Rebuilt */}
+      <section
+        id="services"
+        className="relative z-10 w-full overflow-hidden"
+        style={{
+          background: '#0c0817',
+          paddingTop: '120px',
+          paddingBottom: '120px',
+        }}
+      >
+        {/* Ambient Glows */}
+        <div className="absolute top-1/4 left-10 w-[300px] h-[300px] bg-purple-900/10 rounded-full blur-[100px] pointer-events-none" />
+        <div className="absolute bottom-1/4 right-10 w-[350px] h-[350px] bg-pink-900/10 rounded-full blur-[120px] pointer-events-none" />
+
+        {/* Section Container — 1400px max, centered, responsive padding */}
+        <div
+          className="relative z-10"
+          style={{ maxWidth: '1400px', width: '100%', margin: '0 auto', paddingLeft: '32px', paddingRight: '32px' }}
+        >
+
+          {/* Section Header — Center aligned */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            style={{ textAlign: 'center', marginBottom: '80px' }}
+          >
+            <h2 className="font-serif" style={{ fontWeight: 600, fontSize: 'clamp(36px, 5vw, 52px)', color: '#ffffff', lineHeight: 1.15, letterSpacing: '-0.01em', marginBottom: '16px' }}>
+              Our Services
+            </h2>
+            <p className="font-sans" style={{ color: 'rgba(255, 255, 255, 0.55)', fontSize: 'clamp(15px, 1.8vw, 18px)', lineHeight: 1.6, maxWidth: '560px', margin: '0 auto' }}>
+              Comprehensive digital solutions tailored to elevate your business.
+            </p>
+          </motion.div>
+
+          {/* Services Grid */}
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.1 }}
+            className="services-grid"
+          >
+            {SERVICES.map((service, index) => {
+              const ServiceIcon = service.icon;
+              return (
+                <motion.div
+                  key={index}
+                  variants={cardVariants}
+                  className="service-card group"
+                  onClick={() => {
+                    setFormData({
+                      name: '',
+                      email: '',
+                      company: '',
+                      service: service.title,
+                      message: ''
+                    });
+                    setIsModalOpen(true);
+                    setFormSubmitted(false);
+                  }}
+                >
+                  {/* Hover background image & overlay */}
+                  <div
+                    className="service-card-bg"
+                    style={{ backgroundImage: `url(${service.image})` }}
+                  />
+                  <div className="service-card-overlay" />
+
+                  {/* Card Content Wrapper */}
+                  <div className="service-card-content">
+                    {/* Top Row: Number */}
+                    <span className="service-card-number font-serif">
+                      {service.number}
+                    </span>
+
+                    {/* Middle Section: Badge & Description */}
+                    <div className="service-card-middle">
+                      <span className="service-card-badge font-sans">
+                        {service.badge}
+                      </span>
+                      <p className="service-card-description font-sans">
+                        {service.description}
+                      </p>
+                    </div>
+
+                    {/* Bottom Row: Icon & Arrow Button */}
+                    <div className="service-card-bottom">
+                      <div className="service-card-icon">
+                        <ServiceIcon style={{ width: '20px', height: '20px' }} />
+                      </div>
+                      <div className="service-card-arrow">
+                        <ArrowRight style={{ width: '16px', height: '16px' }} />
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </motion.div>
+        </div>
+      </section>
+
       {/* ===== Case Studies Section ===== */}
       <CaseStudiesSection />
 
-      {/* ===== About Section ===== */}
-      <AboutSection />
 
       {/* ===== Footer Section ===== */}
       <Footer onOpenModal={() => setIsModalOpen(true)} />
