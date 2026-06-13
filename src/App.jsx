@@ -1,5 +1,6 @@
-import { useState } from 'react';
-import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
+import { useState, useEffect, useRef } from 'react';
+import 'animate.css';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowRight,
   Sparkles,
@@ -9,91 +10,796 @@ import {
   ChevronDown,
   Menu,
   X,
+  Share2,
+  Palette,
+  Camera,
+  Film,
+  Package,
+  Megaphone,
+  Check,
+  Play,
+  Volume2,
+  TrendingUp,
+  Code,
+  PenTool,
+  Briefcase,
+  Smartphone,
+  ShoppingCart
 } from 'lucide-react';
 
-// Partner Logo Imports
-import logoTenderBites from './assets/partners/tender_bites.png';
-import logoYelo from './assets/partners/yelo.png';
-import logoPratyaksh from './assets/partners/pratyaksh.png';
-import logoVylet from './assets/partners/vylet.png';
-import logoNobleSupreme from './assets/partners/noble_supreme.png';
-import logoYou from './assets/partners/you.png';
-import logoApsaraRanch from './assets/partners/apsara_ranch.png';
-import logoCivicFoundation from './assets/partners/civic_foundation.png';
-import logoGreenValley from './assets/partners/green_valley.png';
-import logoHdfcParivartan from './assets/partners/hdfc_parivartan.png';
+// Partner Logo Imports (Removed since we use inline SVG/Text logos)
+
+// Case Study Project Images
+import projectSaraas from './assets/projects/saraas.png';
+import projectYelo from './assets/projects/yelo.png';
+import projectTantashala from './assets/projects/tantashala.png';
+import projectGovt from './assets/projects/govt.png';
+import projectTenderBites from './assets/projects/tenderbites.png';
+import projectApsara from './assets/projects/apsara.png';
+
+// Service Hover Background Images
+import serviceWebsite from './assets/services/website_dev.png';
+import serviceSoftware from './assets/services/software_dev.png';
+import serviceMobile from './assets/services/mobile_dev.png';
+import serviceEcommerce from './assets/services/ecommerce_dev.png';
+import serviceBrandDesign from './assets/services/brand_design.png';
+import serviceDigitalMarketing from './assets/services/digital_marketing.png';
+import serviceMediaProduction from './assets/services/media_production.png';
+import serviceHRSolutions from './assets/services/hr_solutions.png';
+
+const CASE_STUDIES = [
+  {
+    title: 'Transforming Saraas Group Into A Modern Brand With Tech, HR & Marketing Support',
+    description: 'End-to-end business consulting and brand transformation for a multi-vertical enterprise. Delivered digital presence, HR restructuring, and marketing strategy.',
+    image: projectSaraas,
+    tags: ['Branding', 'Consulting', 'HR'],
+    animation: 'animate__fadeInLeft',
+    delay: '0.2s',
+  },
+  {
+    title: 'Building YELO Into A Modern Coworking & Community Brand',
+    description: 'YELO is a bike service app in Bhubaneswar, Odisha, offering doorstep two wheeler repair and maintenance. Customers can book services, track repairs, and pay online through the app and website.',
+    image: projectYelo,
+    tags: ['App Design', 'Branding', 'Marketing'],
+    animation: 'animate__fadeInRight',
+    delay: '0.4s',
+  },
+  {
+    title: 'Elevating Tantashala From Local Handloom Store To A Digital First Fashion Brand',
+    description: 'Complete digital transformation of a traditional handloom business with e-commerce integration, social media strategy, and premium brand positioning.',
+    image: projectTantashala,
+    tags: ['E-Commerce', 'Fashion', 'Digital'],
+    animation: 'animate__fadeInUp',
+    delay: '0.6s',
+  },
+  {
+    title: 'UnderGrads X Government Initiatives',
+    description: 'Partnered with government bodies to execute community development programs, event management, and public outreach campaigns at scale.',
+    image: projectGovt,
+    tags: ['Government', 'Events', 'Outreach'],
+    animation: 'animate__zoomIn',
+    delay: '0.8s',
+  },
+];
+
+const SERVICES = [
+  {
+    title: 'Website Development',
+    number: '01',
+    badge: 'WEBSITE DEVELOPMENT',
+    icon: Globe,
+    description: "Custom, responsive websites tailored to your brand's unique needs.",
+    image: serviceWebsite
+  },
+  {
+    title: 'Software Development',
+    number: '02',
+    badge: 'SOFTWARE DEVELOPMENT',
+    icon: Code,
+    description: 'Scalable, robust software solutions to drive your business forward.',
+    image: serviceSoftware
+  },
+  {
+    title: 'Mobile App Development',
+    number: '03',
+    badge: 'MOBILE APP DEVELOPMENT',
+    icon: Smartphone,
+    description: 'Native and cross-platform mobile apps for iOS and Android.',
+    image: serviceMobile
+  },
+  {
+    title: 'E-Commerce Development',
+    number: '04',
+    badge: 'E-COMMERCE DEVELOPMENT',
+    icon: ShoppingCart,
+    description: 'Secure, high-converting online stores built on modern platforms.',
+    image: serviceEcommerce
+  },
+  {
+    title: 'UI/UX & Brand Design',
+    number: '05',
+    badge: 'UI/UX & BRAND DESIGN',
+    icon: Palette,
+    description: 'Sleek, modern UI/UX design and custom digital brand identities.',
+    image: serviceBrandDesign
+  },
+  {
+    title: 'Digital Marketing & SEO',
+    number: '06',
+    badge: 'DIGITAL MARKETING & SEO',
+    icon: TrendingUp,
+    description: 'Data-driven marketing campaigns, SEO scaling, and organic growth.',
+    image: serviceDigitalMarketing
+  },
+  {
+    title: 'Content & Media Production',
+    number: '07',
+    badge: 'CONTENT & MEDIA PRODUCTION',
+    icon: Film,
+    description: 'Premium video production, motion graphics, and social content assets.',
+    image: serviceMediaProduction
+  },
+  {
+    title: 'HR & Talent Solutions',
+    number: '08',
+    badge: 'HR & TALENT SOLUTIONS',
+    icon: Briefcase,
+    description: 'HR restructuring, talent acquisition, and organizational development to scale your team.',
+    image: serviceHRSolutions
+  }
+];
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.12,
+    }
+  }
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 15 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: "spring",
+      stiffness: 50,
+      damping: 15,
+      duration: 0.8
+    }
+  }
+};
+
+
+/* ===== Case Studies Section Component ===== */
+function CaseStudiesSection() {
+  const sectionRef = useRef(null);
+  const [isVisible, setIsVisible] = useState(false);
+  const [clickedCard, setClickedCard] = useState(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1 }
+    );
+    if (sectionRef.current) observer.observe(sectionRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  // Image parallax handler — max 8px translation
+  const handleMouseMove = (e, cardEl) => {
+    if (!cardEl) return;
+    const rect = cardEl.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width - 0.5) * 2; // -1 to 1
+    const y = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
+    const img = cardEl.querySelector('.case-study-image');
+    if (img) {
+      img.style.transform = `scale(1.05) translate(${x * -8}px, ${y * -8}px)`;
+    }
+  };
+
+  const handleMouseLeave = (cardEl) => {
+    if (!cardEl) return;
+    const img = cardEl.querySelector('.case-study-image');
+    if (img) {
+      img.style.transform = '';
+    }
+  };
+
+  // Bento layout: Row 1 = large(65%) + small(35%), Row 2 = small(35%) + large(65%)
+  const getCardAnimation = (index) => {
+    switch (index) {
+      case 0: return 'animate__fadeInLeft';
+      case 1: return 'animate__fadeInRight';
+      case 2: return 'animate__fadeInUp';
+      case 3: return 'animate__fadeInUp';
+      default: return 'animate__fadeInUp';
+    }
+  };
+
+  const getCardDelay = (index) => `${0.2 + index * 0.15}s`;
+
+
+
+  return (
+    <section
+      id="work"
+      ref={sectionRef}
+      className="relative z-10 w-full overflow-hidden"
+      style={{
+        background: '#0c0817',
+        paddingTop: '120px',
+        paddingBottom: '120px',
+      }}
+    >
+      {/* Background accents */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-purple-500/20 to-transparent" />
+      <div className="absolute top-1/3 right-0 w-[400px] h-[400px] bg-purple-900/8 rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute bottom-1/3 left-0 w-[350px] h-[350px] bg-pink-900/8 rounded-full blur-[120px] pointer-events-none" />
+
+      {/* Container */}
+      <div
+        className="relative z-10"
+        style={{ maxWidth: '1400px', width: '100%', margin: '0 auto', paddingLeft: '32px', paddingRight: '32px' }}
+      >
+
+        {/* Section Header */}
+        <div style={{ textAlign: 'center', marginBottom: '80px' }}>
+          {/* Small section label */}
+          <span
+            className={`font-sans ${isVisible ? 'animate__animated animate__fadeInUp' : 'opacity-0'}`}
+            style={{
+              display: 'block',
+              fontSize: '11px',
+              fontWeight: 700,
+              letterSpacing: '0.2em',
+              textTransform: 'uppercase',
+              color: '#a78bfa',
+              marginBottom: '16px',
+              animationDuration: '0.8s',
+              animationFillMode: 'both',
+            }}
+          >
+            Case Studies
+          </span>
+
+          <h2
+            className={`font-serif ${isVisible ? 'animate__animated animate__fadeInUp' : 'opacity-0'}`}
+            style={{
+              fontWeight: 600,
+              fontSize: 'clamp(36px, 5vw, 52px)',
+              color: '#fff',
+              lineHeight: 1.15,
+              letterSpacing: '-0.01em',
+              marginBottom: '20px',
+              animationDuration: '1s',
+              animationDelay: '0.1s',
+              animationFillMode: 'both',
+            }}
+          >
+            Crafting success with{' '}
+            <span style={{
+              background: 'linear-gradient(90deg, #a78bfa, #d946ef, #ec4899)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+            }}>
+              our clients
+            </span>
+          </h2>
+          <p
+            className={`font-sans ${isVisible ? 'animate__animated animate__fadeInUp' : 'opacity-0'}`}
+            style={{
+              color: 'rgba(255,255,255,0.55)',
+              fontSize: 'clamp(15px, 1.8vw, 18px)',
+              lineHeight: 1.6,
+              maxWidth: '560px',
+              margin: '0 auto',
+              animationDuration: '1s',
+              animationDelay: '0.2s',
+              animationFillMode: 'both',
+            }}
+          >
+            Showcasing collaborations that blend creativity, strategy and innovation into impactful results.
+          </p>
+        </div>
+
+        {/* Bento Projects Grid */}
+        <div className="case-studies-grid">
+          {CASE_STUDIES.map((project, index) => (
+            <div
+              key={index}
+              className={`case-study-card group ${isVisible ? `animate__animated ${getCardAnimation(index)}` : 'opacity-0'}`}
+              style={{
+                animationDelay: getCardDelay(index),
+                animationDuration: '0.8s',
+                animationFillMode: 'both',
+              }}
+              onMouseMove={(e) => handleMouseMove(e, e.currentTarget)}
+              onMouseLeave={(e) => handleMouseLeave(e.currentTarget)}
+            >
+              {/* Image Container */}
+              <div className="case-study-image-wrapper">
+                <img
+                  src={project.image}
+                  alt={project.title}
+                  className="case-study-image"
+                  loading="lazy"
+                />
+                {/* Overlay gradient */}
+                <div className="case-study-overlay" />
+              </div>
+
+              {/* Content overlay */}
+              <div className="case-study-content">
+                {/* Tags */}
+                <div className="case-study-tags">
+                  {project.tags.map((tag, i) => (
+                    <span key={i} className="case-study-tag">{tag}</span>
+                  ))}
+                </div>
+
+                {/* Title */}
+                <h3 className="font-serif case-study-title">
+                  {project.title}
+                </h3>
+
+                {/* Description — appears on hover */}
+                <p className="font-sans case-study-description">
+                  {project.description}
+                </p>
+
+                {/* CTA Button */}
+                <button
+                  className="case-study-cta"
+                  onMouseEnter={(e) => {
+                    e.currentTarget.classList.add('animate__animated', 'animate__pulse');
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.classList.remove('animate__animated', 'animate__pulse');
+                  }}
+                  onClick={(e) => {
+                    e.currentTarget.classList.remove('animate__pulse');
+                    e.currentTarget.classList.add('animate__animated', 'animate__rubberBand');
+                    setClickedCard(index);
+                    setTimeout(() => {
+                      e.currentTarget.classList.remove('animate__animated', 'animate__rubberBand');
+                      setClickedCard(null);
+                    }, 800);
+                  }}
+                >
+                  <span>See case study</span>
+                  <ArrowRight style={{ width: '16px', height: '16px' }} />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+
+/* ===== About Section Component ===== */
+function AboutSection() {
+  const [activeTab, setActiveTab] = useState('About');
+
+  return (
+    <section
+      id="about"
+      className="relative z-10 w-full overflow-hidden bg-[#0c0817] border-t border-white/[0.08]"
+      style={{ paddingTop: '120px', paddingBottom: '120px' }}
+    >
+      {/* Ambient background glows */}
+      <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-purple-900/10 rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-pink-900/8 rounded-full blur-[120px] pointer-events-none" />
+
+      {/* Full-width centered column */}
+      <div
+        className="relative z-10 w-full flex flex-col items-center text-center"
+        style={{ maxWidth: '1100px', margin: '0 auto', paddingLeft: '32px', paddingRight: '32px' }}
+      >
+        {/* Section Tagline */}
+        <p 
+          className="w-full text-center font-sans text-sm sm:text-base font-bold tracking-[0.3em] text-purple-400 uppercase"
+          style={{ marginBottom: '48px' }}
+        >
+          Partner For Digital Solutions
+        </p>
+
+        {/* Tab Buttons — centered, with proper underline indicator */}
+        <div 
+          className="relative flex items-center justify-center gap-2 sm:gap-6 w-full"
+          style={{ marginBottom: '80px', marginTop: '24px' }}
+        >
+          {/* Divider line that runs across full width */}
+          <div className="absolute bottom-0 left-0 right-0 h-px bg-white/[0.08]" />
+
+          {['About', 'Process', 'Implementation'].map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`relative pb-3 px-2 sm:px-5 font-sans text-sm sm:text-base font-bold tracking-[0.18em] uppercase transition-colors duration-300 cursor-pointer ${
+                activeTab === tab ? 'text-white' : 'text-white/35 hover:text-white/65'
+              }`}
+            >
+              {tab}
+              {activeTab === tab && (
+                <motion.div
+                  layoutId="aboutTabLine"
+                  className="absolute bottom-[-1px] left-2 sm:left-5 right-2 sm:right-5 h-[2px] bg-purple-500 shadow-[0_0_10px_rgba(168,85,247,0.7)]"
+                  transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                />
+              )}
+            </button>
+          ))}
+        </div>
+
+        {/* Tab Content Area — always centered */}
+        <div className="w-full flex flex-col items-center">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -18 }}
+              transition={{ duration: 0.35 }}
+              className="w-full flex flex-col items-center"
+            >
+              {/* Body Paragraph — centered, constrained width */}
+              <p
+                className="font-sans text-white/85 text-center"
+                style={{
+                  fontSize: 'clamp(18px, 2.2vw, 22px)',
+                  lineHeight: '1.8',
+                  maxWidth: '820px',
+                  marginBottom: '64px',
+                }}
+              >
+                {activeTab === 'About' && 'We are a mix of business oriented minds and creative thinkers, passionate about taking your ideas to the next level. Our team brings together experienced professionals from the industry and young, innovative Gen Z talent, creating the perfect balance to move your brand story forward.'}
+                {activeTab === 'Process' && "Our process is simple yet powerful. First, we DISCUSS to understand your real challenges. Then we BRAINSTORM together, combining our expertise with your vision. We move forward to SOLVE by implementing clear, practical steps. And we continue to REFINE through regular feedback — because the goal isn't just to deliver, but to create long lasting customer satisfaction."}
+                {activeTab === 'Implementation' && "Over the years, we've worked with clients across industries, government projects, and NGOs. The common thread? They value our ability to simplify problems, deliver consistently, and build long term partnerships. Most importantly, our clients are happy working with us and that's what keeps us going."}
+              </p>
+
+              {/* ── About: 3 Stat Cards ── */}
+              {activeTab === 'About' && (
+                <div
+                  className="grid grid-cols-1 sm:grid-cols-3 w-full"
+                  style={{ gap: '24px', maxWidth: '840px' }}
+                >
+                  {[
+                    { val: '5+',  label: 'Years in Business' },
+                    { val: '50+', label: 'Completed Projects' },
+                    { val: '32%', label: 'Average KPI Improvement' },
+                  ].map((stat, i) => (
+                    <div
+                      key={i}
+                      className="flex flex-col items-center justify-center rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-md shadow-lg"
+                      style={{ padding: '40px 24px' }}
+                    >
+                      <span
+                        className="font-serif font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500 leading-none"
+                        style={{ fontSize: 'clamp(48px, 7vw, 64px)', marginBottom: '12px' }}
+                      >
+                        {stat.val}
+                      </span>
+                      <span className="font-sans text-white/75 text-sm sm:text-base font-medium tracking-wide text-center">
+                        {stat.label}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* ── Process: 4 Step Cards ── */}
+              {activeTab === 'Process' && (
+                <div
+                  className="grid grid-cols-2 sm:grid-cols-4 w-full"
+                  style={{ gap: '20px', maxWidth: '900px' }}
+                >
+                  {[
+                    { num: '01', title: 'Discuss' },
+                    { num: '02', title: 'Brainstorm' },
+                    { num: '03', title: 'Solve' },
+                    { num: '04', title: 'Refine' },
+                  ].map((step, i) => (
+                    <div
+                      key={i}
+                      className="relative flex flex-col items-center justify-center text-center rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-md overflow-hidden"
+                      style={{ padding: '36px 20px' }}
+                    >
+                      {/* Ghost number watermark */}
+                      <span
+                        className="absolute top-2 right-3 font-serif font-black text-white/[0.04] leading-none select-none pointer-events-none"
+                        style={{ fontSize: '80px' }}
+                      >
+                        {step.num}
+                      </span>
+                      <span className="font-sans text-purple-400 font-bold text-xs sm:text-[13px] uppercase tracking-[0.22em] mb-4 relative z-10">
+                        Step {step.num}
+                      </span>
+                      <h3 className="font-serif text-white font-bold text-xl sm:text-2xl relative z-10">
+                        {step.title}
+                      </h3>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* ── Implementation: Area Capsules ── */}
+              {activeTab === 'Implementation' && (
+                <div
+                  className="flex flex-wrap items-center justify-center"
+                  style={{ gap: '16px', maxWidth: '700px' }}
+                >
+                  {['Brand Management', 'Digital Marketing', 'Corporate Videos'].map((area, i) => (
+                    <div
+                      key={i}
+                      className="rounded-full border border-purple-500/25 bg-purple-500/[0.06] text-white/95 font-sans font-bold tracking-[0.15em] uppercase backdrop-blur-md hover:border-purple-500/55 hover:bg-purple-500/[0.12] transition-all duration-300 cursor-default"
+                      style={{ padding: '16px 36px', fontSize: '15px' }}
+                    >
+                      {area}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+
+
+/* ===== Footer Component ===== */
+function Footer({ onOpenModal }) {
+  const currentYear = new Date().getFullYear();
+  return (
+    <footer className="relative z-10 w-full bg-[#0c0817] pt-20 pb-12 border-t border-white/[0.04] text-white">
+      <div
+        className="relative z-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8 mb-16"
+        style={{ maxWidth: '1400px', width: '100%', margin: '0 auto', paddingLeft: '32px', paddingRight: '32px' }}
+      >
+        {/* Brand Column */}
+        <div className="lg:col-span-4 flex flex-col gap-6 text-left">
+          <a href="#" className="flex items-center gap-2.5 group w-fit">
+            <div className="w-8 h-8 rounded-lg border border-white/10 bg-white/5 flex items-center justify-center transition-transform duration-300 group-hover:scale-105 shadow-inner">
+              <Sparkles className="w-4 h-4 text-orange-500 animate-pulse" />
+            </div>
+            <span
+              className="font-serif font-semibold text-[20px] lowercase tracking-tight transition-opacity duration-300 group-hover:opacity-90"
+              style={{
+                background: 'linear-gradient(135deg, #f97316 0%, #ec4899 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+              }}
+            >
+              antigravity
+            </span>
+          </a>
+          
+          <p className="font-sans text-white/50 text-[13px] leading-relaxed max-w-xs">
+            High-speed, premium, AI-orchestrated consulting and execution for modern business development, design, and media production.
+          </p>
+          
+          {/* Social Icons */}
+          <div className="flex items-center gap-4 text-white/40">
+            <a href="#" className="hover:text-purple-400 transition-colors duration-300" aria-label="Twitter">
+              <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+              </svg>
+            </a>
+            <a href="#" className="hover:text-purple-400 transition-colors duration-300" aria-label="Facebook">
+              <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                <path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c4.56-.93 8-4.96 8-9.75z" />
+              </svg>
+            </a>
+            <a href="#" className="hover:text-purple-400 transition-colors duration-300" aria-label="YouTube">
+              <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                <path d="M23.498 6.163a3.003 3.003 0 0 0-2.11-2.107C19.518 3.5 12 3.5 12 3.5s-7.518 0-9.388.556a3.003 3.003 0 0 0-2.11 2.107C0 8.033 0 12 0 12s0 3.967.502 5.837a3.003 3.003 0 0 0 2.11 2.107C4.482 20.5 12 20.5 12 20.5s7.518 0 9.388-.556a3.003 3.003 0 0 0 2.11-2.107C24 15.967 24 12 24 12s0-3.967-.502-5.837zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+              </svg>
+            </a>
+            <a href="#" className="hover:text-purple-400 transition-colors duration-300" aria-label="LinkedIn">
+              <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        {/* Services Column */}
+        <div className="lg:col-span-2 text-left flex flex-col gap-4">
+          <span className="font-sans text-xs font-bold text-white/90 tracking-widest uppercase">
+            Services
+          </span>
+          <ul className="flex flex-col gap-2.5 text-[13px] text-white/50 font-sans">
+            <li><a href="#services" className="hover:text-purple-400 hover:translate-x-0.5 transition-all duration-300 inline-block">Web Dev</a></li>
+            <li><a href="#services" className="hover:text-purple-400 hover:translate-x-0.5 transition-all duration-300 inline-block">Software Dev</a></li>
+            <li><a href="#services" className="hover:text-purple-400 hover:translate-x-0.5 transition-all duration-300 inline-block">Mobile Apps</a></li>
+            <li><a href="#services" className="hover:text-purple-400 hover:translate-x-0.5 transition-all duration-300 inline-block">E-Commerce</a></li>
+            <li><a href="#services" className="hover:text-purple-400 hover:translate-x-0.5 transition-all duration-300 inline-block">UI/UX Design</a></li>
+            <li><a href="#services" className="hover:text-purple-400 hover:translate-x-0.5 transition-all duration-300 inline-block">Talent & HR</a></li>
+          </ul>
+        </div>
+
+        {/* Company Column */}
+        <div className="lg:col-span-2 text-left flex flex-col gap-4">
+          <span className="font-sans text-xs font-bold text-white/90 tracking-widest uppercase">
+            Company
+          </span>
+          <ul className="flex flex-col gap-2.5 text-[13px] text-white/50 font-sans">
+            <li><a href="#about" className="hover:text-purple-400 hover:translate-x-0.5 transition-all duration-300 inline-block">About Us</a></li>
+            <li><a href="#work" className="hover:text-purple-400 hover:translate-x-0.5 transition-all duration-300 inline-block">Our Clients</a></li>
+            <li><a href="#work" className="hover:text-purple-400 hover:translate-x-0.5 transition-all duration-300 inline-block">Case Studies</a></li>
+            <li><a href="#" className="hover:text-purple-400 hover:translate-x-0.5 transition-all duration-300 inline-block">Our Blog</a></li>
+            <li><a href="#" className="hover:text-purple-400 hover:translate-x-0.5 transition-all duration-300 inline-block">Careers <span className="text-[9px] font-bold text-pink-500 bg-pink-500/10 px-1.5 py-0.5 rounded ml-1">New</span></a></li>
+            <li><a href="#" className="hover:text-purple-400 hover:translate-x-0.5 transition-all duration-300 inline-block">Brand Assets</a></li>
+          </ul>
+        </div>
+
+        {/* Resources Column */}
+        <div className="lg:col-span-2 text-left flex flex-col gap-4">
+          <span className="font-sans text-xs font-bold text-white/90 tracking-widest uppercase">
+            Resources
+          </span>
+          <ul className="flex flex-col gap-2.5 text-[13px] text-white/50 font-sans">
+            <li><button onClick={onOpenModal} className="hover:text-purple-400 text-left hover:translate-x-0.5 transition-all duration-300 inline-block cursor-pointer">Help Centre</button></li>
+            <li><a href="#" className="hover:text-purple-400 hover:translate-x-0.5 transition-all duration-300 inline-block">API Reference</a></li>
+            <li><a href="#" className="hover:text-purple-400 hover:translate-x-0.5 transition-all duration-300 inline-block">Privacy Policy</a></li>
+            <li><a href="#" className="hover:text-purple-400 hover:translate-x-0.5 transition-all duration-300 inline-block">Terms of Service</a></li>
+          </ul>
+        </div>
+
+        {/* Contact Column */}
+        <div className="lg:col-span-2 text-left flex flex-col gap-4">
+          <span className="font-sans text-xs font-bold text-white/90 tracking-widest uppercase">
+            Contact
+          </span>
+          <ul className="flex flex-col gap-2 text-[13px] text-white/50 font-sans mb-3">
+            <li><button onClick={onOpenModal} className="hover:text-purple-400 text-left hover:translate-x-0.5 transition-all duration-300 inline-block cursor-pointer">Support</button></li>
+            <li><a href="mailto:hello@antigravity.media" className="text-purple-400 hover:text-purple-300 hover:translate-x-0.5 transition-all duration-300 inline-block font-semibold">hello@antigravity.media</a></li>
+          </ul>
+
+          {/* Download badges */}
+          <div className="flex flex-col gap-2 w-full max-w-[130px]">
+            <a href="#" className="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg py-1.5 px-3 transition-colors duration-300 group shadow-inner">
+              <svg className="w-5 h-5 text-white/70 group-hover:text-white transition-colors" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 4.17c.66-.81 1.11-1.93.99-3.06-1 .04-2.22.67-2.94 1.5-.63.73-1.18 1.87-1.03 2.98 1.12.09 2.27-.57 2.98-1.42z" />
+              </svg>
+              <div className="flex flex-col items-start leading-[1]">
+                <span className="text-[7px] text-white/40 uppercase">Download on the</span>
+                <span className="text-[10px] font-bold text-white/80 group-hover:text-white transition-colors">App Store</span>
+              </div>
+            </a>
+            
+            <a href="#" className="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg py-1.5 px-3 transition-colors duration-300 group shadow-inner">
+              <svg className="w-5 h-5 text-white/70 group-hover:text-white transition-colors" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M3.609 1.814L13.783 12 3.609 22.186A2.245 2.245 0 0 1 3 20.598V3.402c0-.62.227-1.192.609-1.588zm1.214-.803c.164-.067.345-.104.536-.104.436 0 .83.189 1.109.492l10.87 6.275L14.77 13 4.823 1.011zm0 21.978L14.77 13l2.568 5.34-10.87 6.275a1.272 1.272 0 0 1-1.109.492c-.191 0-.372-.037-.536-.104L4.823 22.989zm13.11-12.72l3.418-1.974c.48-.277.809-.796.809-1.388s-.329-1.111-.809-1.388L18.42 5.861 15.772 13l2.648 1.139z" />
+              </svg>
+              <div className="flex flex-col items-start leading-[1]">
+                <span className="text-[7px] text-white/40 uppercase">Get it on</span>
+                <span className="text-[10px] font-bold text-white/80 group-hover:text-white transition-colors">Google Play</span>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+      
+      {/* Bottom Legal */}
+      <div 
+        className="pt-8 border-t border-white/[0.04] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-white/30"
+        style={{ maxWidth: '1400px', width: '100%', margin: '0 auto', paddingLeft: '32px', paddingRight: '32px' }}
+      >
+        <span>&copy; {currentYear} Antigravity. All rights reserved.</span>
+        <div className="flex items-center gap-6">
+          <a href="#" className="hover:text-purple-400 transition-colors">Security</a>
+          <a href="#" className="hover:text-purple-400 transition-colors">Cookies</a>
+          <a href="#" className="hover:text-purple-400 transition-colors">Sitemap</a>
+        </div>
+      </div>
+    </footer>
+  );
+}
 
 
 function App() {
-  const { scrollY } = useScroll();
   const [activeSection, setActiveSection] = useState('home');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  // Create a spring physics wrapper around scrollY to eliminate scroll ticks and make movement butter-smooth.
-  const smoothScrollY = useSpring(scrollY, {
-    stiffness: 85,    // Controls the speed of the snap
-    damping: 25,      // Controls the cushioning/damping factor
-    restDelta: 0.001
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [formSubmitted, setFormSubmitted] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    company: '',
+    service: 'Design & Media Production',
+    message: ''
   });
-
-  // Calculate the y translation for the background layer.
-  const y = useTransform(smoothScrollY, [0, 1000], [0, 300]);
 
   return (
     <div className="relative min-h-screen font-sans selection:bg-purple-500/30 selection:text-white">
-      {/* Sticky Floating Glassmorphism Navbar */}
-      <header className="fixed top-5 left-1/2 -translate-x-1/2 w-[90%] max-w-[1120px] z-50 rounded-full px-8 py-3.5 flex items-center justify-between border border-white/[0.08] bg-white/[0.05] backdrop-blur-[14px] shadow-[0_4px_24px_rgba(139,92,246,0.08)] transition-all duration-300">
-        {/* Logo */}
-        <a href="#" className="flex items-center gap-3 group">
-          <div className="w-8 h-8 rounded-lg border border-white/10 bg-white/5 flex items-center justify-center transition-transform duration-300 group-hover:scale-105 shadow-inner">
-            <Sparkles className="w-4 h-4 text-purple-300 animate-pulse" />
-          </div>
-          <span className="font-sans font-semibold text-white tracking-[0.25em] text-sm uppercase group-hover:text-purple-200 transition-colors">
-            Antigravity
-          </span>
-        </a>
-
-        {/* Desktop Nav Links */}
-        <nav className="hidden md:flex items-center gap-10">
-          {['home', 'services', 'work'].map((item) => (
-            <a
-              key={item}
-              href={`#${item}`}
-              onClick={() => setActiveSection(item)}
-              className={`font-display text-xs font-bold tracking-widest uppercase transition-all duration-300 relative py-1 ${activeSection === item ? 'text-white' : 'text-white/75 hover:text-white'
-                }`}
-            >
-              {item}
-              {/* Active Indicator */}
-              {activeSection === item && (
-                <motion.span
-                  layoutId="activeIndicator"
-                  className="absolute bottom-[-6px] left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-purple-400 rounded-full shadow-[0_0_10px_#a855f7]"
-                  transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                />
-              )}
-            </a>
-          ))}
-        </nav>
-
-        {/* Contact Button */}
-        <div className="hidden md:block">
-          <a
-            href="#contact"
-            className="h-10 px-6 inline-flex items-center justify-center rounded-full text-xs font-semibold tracking-wider text-white uppercase bg-gradient-to-r from-purple-600 via-purple-500 to-pink-500 hover:from-purple-500 hover:to-pink-400 border border-white/10 shadow-[0_4px_20px_rgba(168,85,247,0.2)] hover:shadow-[0_4px_25px_rgba(168,85,247,0.35)] hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer"
-          >
-            Let's Talk
-          </a>
-        </div>
-
-        {/* Mobile Menu Toggle */}
-        <button
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="md:hidden p-2 text-white/80 hover:text-white transition-colors cursor-pointer"
-          aria-label="Toggle Menu"
+      {/* Pinned Light-Themed Header */}
+      <header className="fixed top-0 left-0 right-0 z-50 bg-[#0c0817]/70 backdrop-blur-[20px] border-b border-white/[0.08] h-[72px] transition-all duration-300">
+        <div
+          className="h-full flex items-center justify-between border-l border-r border-white/[0.08]"
+          style={{ maxWidth: '1400px', width: '100%', margin: '0 auto', paddingLeft: '32px', paddingRight: '32px' }}
         >
-          {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-        </button>
+          {/* Logo with orange/pink gradient script style */}
+          <a href="#" className="flex items-center gap-2.5 group">
+            <div className="w-8 h-8 rounded-lg border border-white/10 bg-white/5 flex items-center justify-center transition-transform duration-300 group-hover:scale-105 shadow-inner">
+              <Sparkles className="w-4 h-4 text-orange-500 animate-pulse" />
+            </div>
+            <span
+              className="font-serif font-semibold text-[20px] lowercase tracking-tight transition-opacity duration-300 group-hover:opacity-90"
+              style={{
+                background: 'linear-gradient(135deg, #f97316 0%, #ec4899 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+              }}
+            >
+              antigravity
+            </span>
+          </a>
+
+          {/* Desktop Nav Links + Divider + CTA */}
+          <div className="flex items-center gap-8 h-full">
+            <nav className="hidden md:flex items-center gap-8">
+              {['home', 'services', 'work'].map((item) => (
+                <a
+                  key={item}
+                  href={`#${item}`}
+                  onClick={() => setActiveSection(item)}
+                  className={`font-sans text-xs font-bold tracking-widest uppercase transition-all duration-300 relative py-1 ${activeSection === item ? 'text-purple-400' : 'text-white/60 hover:text-purple-400'
+                    }`}
+                >
+                  {item}
+                  {/* Active Indicator */}
+                  {activeSection === item && (
+                    <motion.span
+                      layoutId="activeIndicator"
+                      className="absolute bottom-[-6px] left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-purple-400 rounded-full shadow-[0_0_8px_rgba(124,58,237,0.4)]"
+                      transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                    />
+                  )}
+                </a>
+              ))}
+            </nav>
+
+            {/* Vertical Divider */}
+            <div className="hidden md:block w-px h-5 bg-white/[0.08]" />
+
+            {/* CTA Button */}
+            <div className="hidden md:block">
+              <button
+                onClick={() => {
+                  setFormData({ name: '', email: '', company: '', service: 'Design & Media Production', message: '' });
+                  setIsModalOpen(true);
+                  setFormSubmitted(false);
+                }}
+                className="h-10 px-6 inline-flex items-center justify-center rounded-full text-xs font-bold tracking-wider text-white uppercase bg-purple-600 hover:bg-purple-700 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 cursor-pointer shadow-[0_4px_12px_rgba(124,58,237,0.2)] hover:shadow-[0_4px_18px_rgba(124,58,237,0.35)]"
+              >
+                Let's Talk
+              </button>
+            </div>
+
+            {/* Mobile Menu Toggle */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden p-2 text-white/70 hover:text-purple-400 transition-colors cursor-pointer"
+              aria-label="Toggle Menu"
+            >
+              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
+        </div>
 
         {/* Mobile Navigation Drawer */}
         {mobileMenuOpen && (
@@ -101,7 +807,7 @@ function App() {
             initial={{ opacity: 0, y: -10, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.95 }}
-            className="absolute top-full left-0 right-0 mt-3 rounded-3xl border border-white/10 bg-[#0c0817]/95 backdrop-blur-[20px] py-6 px-8 flex flex-col gap-5 md:hidden shadow-2xl shadow-purple-950/20"
+            className="absolute top-full left-0 right-0 border-b border-white/10 bg-[#0c0817]/98 backdrop-blur-[20px] py-6 px-8 flex flex-col gap-5 md:hidden shadow-xl"
           >
             {['home', 'services', 'work'].map((item) => (
               <a
@@ -111,30 +817,31 @@ function App() {
                   setActiveSection(item);
                   setMobileMenuOpen(false);
                 }}
-                className={`font-display text-sm font-bold tracking-widest uppercase transition-colors ${activeSection === item ? 'text-white' : 'text-white/70 hover:text-white'
+                className={`font-sans text-sm font-bold tracking-widest uppercase transition-colors ${activeSection === item ? 'text-purple-400' : 'text-white/70 hover:text-purple-400'
                   }`}
               >
                 {item}
               </a>
             ))}
-            <a
-              href="#contact"
-              onClick={() => setMobileMenuOpen(false)}
-              className="w-full text-center py-3 rounded-full text-xs font-bold tracking-widest text-white uppercase bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-500 hover:to-pink-400 transition-all shadow-md"
+            <button
+              onClick={() => {
+                setFormData({ name: '', email: '', company: '', service: 'Design & Media Production', message: '' });
+                setIsModalOpen(true);
+                setFormSubmitted(false);
+                setMobileMenuOpen(false);
+              }}
+              className="w-full text-center py-3 rounded-full text-xs font-bold tracking-widest text-white uppercase bg-purple-600 hover:bg-purple-700 transition-all shadow-md cursor-pointer"
             >
               Let's Talk
-            </a>
+            </button>
           </motion.div>
         )}
       </header>
 
       {/* Hero / Parallax Screen */}
       <section id="home" className="relative w-full min-h-screen flex flex-col justify-center items-center overflow-hidden">
-        {/* Parallax Background Layer */}
-        <motion.div
-          style={{ y }}
-          className="layer"
-        />
+        {/* Background Layer */}
+        <div className="layer" />
 
 
 
@@ -170,8 +877,12 @@ function App() {
 
             {/* CTA Button */}
             <div className="flex items-center justify-center" style={{ marginTop: '20px' }}>
-              <a
-                href="#contact"
+              <button
+                onClick={() => {
+                  setFormData({ name: '', email: '', company: '', service: 'Design & Media Production', message: '' });
+                  setIsModalOpen(true);
+                  setFormSubmitted(false);
+                }}
                 className="group relative inline-flex items-center justify-center gap-3 px-8 rounded-full cursor-pointer overflow-hidden transition-all duration-[300ms] hover:scale-[1.03] hover:-translate-y-[2px] active:scale-[0.97]"
                 style={{
                   height: '48px',
@@ -204,7 +915,7 @@ function App() {
                 <Sparkles className="w-5 h-5 text-purple-200 group-hover:text-white transition-colors duration-300 relative z-10 flex-shrink-0" />
                 <span className="relative z-10">Let's Build Together</span>
                 <ArrowRight className="w-5 h-5 text-pink-200 group-hover:text-white group-hover:translate-x-1 transition-all duration-300 relative z-10 flex-shrink-0" />
-              </a>
+              </button>
             </div>
           </motion.div>
         </div>
@@ -216,94 +927,390 @@ function App() {
         </div>
       </section>
 
-      {/* Trusted Partners — Premium Animated Marquee */}
+
+
+      {/* Services Section — Rebuilt */}
       <section
-        id="partners"
+        id="services"
         className="relative z-10 w-full overflow-hidden"
         style={{
-          background: '#ffffff',
-          paddingTop: '80px',
-          paddingBottom: '80px',
+          background: '#0c0817',
+          paddingTop: '120px',
+          paddingBottom: '120px',
         }}
       >
+        {/* Ambient Glows */}
+        <div className="absolute top-1/4 left-10 w-[300px] h-[300px] bg-purple-900/10 rounded-full blur-[100px] pointer-events-none" />
+        <div className="absolute bottom-1/4 right-10 w-[350px] h-[350px] bg-pink-900/10 rounded-full blur-[120px] pointer-events-none" />
 
-        {/* Heading — Framer Motion fade in */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.8, ease: 'easeOut' }}
-          className="text-center mb-14 px-6 relative z-10"
+        {/* Section Container — 1400px max, centered, responsive padding */}
+        <div
+          className="relative z-10"
+          style={{ maxWidth: '1400px', width: '100%', margin: '0 auto', paddingLeft: '32px', paddingRight: '32px' }}
         >
-          <h2 className="font-serif font-semibold text-[28px] sm:text-[34px] text-[#0c0817] tracking-tight mb-3">
-            Trusted By Leading{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-700 to-pink-600">Brands</span>
-          </h2>
-          <p className="font-sans text-[#0c0817]/60 text-sm sm:text-base max-w-md mx-auto">
-            Organizations and businesses that trust our expertise.
-          </p>
-        </motion.div>
 
-        {/* Marquee — Framer Motion fade up */}
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.2 }}
-          transition={{ duration: 0.9, delay: 0.2, ease: 'easeOut' }}
-          className="marquee-wrapper relative"
-        >
+          {/* Section Header — Center aligned */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            style={{ textAlign: 'center', marginBottom: '80px' }}
+          >
+            <h2 className="font-serif" style={{ fontWeight: 600, fontSize: 'clamp(36px, 5vw, 52px)', color: '#ffffff', lineHeight: 1.15, letterSpacing: '-0.01em', marginBottom: '16px' }}>
+              Our Services
+            </h2>
+            <p className="font-sans" style={{ color: 'rgba(255, 255, 255, 0.55)', fontSize: 'clamp(15px, 1.8vw, 18px)', lineHeight: 1.6, maxWidth: '560px', margin: '0 auto' }}>
+              Comprehensive digital solutions tailored to elevate your business.
+            </p>
+          </motion.div>
+
+          {/* Services Grid */}
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.1 }}
+            className="services-grid"
+          >
+            {SERVICES.map((service, index) => {
+              const ServiceIcon = service.icon;
+              return (
+                <motion.div
+                  key={index}
+                  variants={cardVariants}
+                  className="service-card group"
+                  onClick={() => {
+                    setFormData({
+                      name: '',
+                      email: '',
+                      company: '',
+                      service: service.title,
+                      message: ''
+                    });
+                    setIsModalOpen(true);
+                    setFormSubmitted(false);
+                  }}
+                >
+                  {/* Hover background image & overlay */}
+                  <div
+                    className="service-card-bg"
+                    style={{ backgroundImage: `url(${service.image})` }}
+                  />
+                  <div className="service-card-overlay" />
+
+                  {/* Card Content Wrapper */}
+                  <div className="service-card-content">
+                    {/* Top Row: Number */}
+                    <span className="service-card-number font-serif">
+                      {service.number}
+                    </span>
+
+                    {/* Middle Section: Badge & Description */}
+                    <div className="service-card-middle">
+                      <span className="service-card-badge font-sans">
+                        {service.badge}
+                      </span>
+                      <p className="service-card-description font-sans">
+                        {service.description}
+                      </p>
+                    </div>
+
+                    {/* Bottom Row: Icon & Arrow Button */}
+                    <div className="service-card-bottom">
+                      <div className="service-card-icon">
+                        <ServiceIcon style={{ width: '20px', height: '20px' }} />
+                      </div>
+                      <div className="service-card-arrow">
+                        <ArrowRight style={{ width: '16px', height: '16px' }} />
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Trusted Partners — Full-Width White Marquee Banner */}
+      <div
+        id="partners"
+        className="relative z-10 w-full overflow-hidden flex items-center h-20 sm:h-24 bg-white border-y border-gray-200/80"
+      >
+        <div className="relative w-full h-full flex items-center">
           {/* Gradient Masks for Fade Edges */}
-          <div className="absolute left-0 top-0 bottom-0 w-24 sm:w-40 z-10 pointer-events-none" style={{ background: 'linear-gradient(to right, #ffffff, transparent)' }} />
-          <div className="absolute right-0 top-0 bottom-0 w-24 sm:w-40 z-10 pointer-events-none" style={{ background: 'linear-gradient(to left, #ffffff, transparent)' }} />
+          <div className="absolute left-0 top-0 bottom-0 w-24 z-10 pointer-events-none" style={{ background: 'linear-gradient(to right, #ffffff, transparent)' }} />
+          <div className="absolute right-0 top-0 bottom-0 w-24 z-10 pointer-events-none" style={{ background: 'linear-gradient(to left, #ffffff, transparent)' }} />
 
-          {/* Scrolling Track — two identical sets for seamless infinite loop */}
-          <div className="marquee-track">
+          {/* Scrolling Track */}
+          <div className="marquee-track flex items-center">
             {[0, 1].map((setIndex) => (
-              <div key={setIndex} className="flex items-center gap-8 px-4">
+              <div key={setIndex} className="flex-shrink-0 flex items-center gap-20 sm:gap-24 px-4">
                 {[
-                  { name: 'Tender Bites', src: logoTenderBites },
-                  { name: 'YELO', src: logoYelo },
-                  { name: 'Pratyaksh', src: logoPratyaksh },
-                  { name: 'Vylet', src: logoVylet },
-                  { name: 'Noble Supreme', src: logoNobleSupreme },
-                  { name: 'YOU', src: logoYou },
-                  { name: 'Hotel Apsara Ranch', src: logoApsaraRanch },
-                  { name: 'Civic Foundation', src: logoCivicFoundation },
-                  { name: 'Green Valley', src: logoGreenValley },
-                  { name: 'HDFC Parivartan', src: logoHdfcParivartan },
+                  {
+                    name: 'AXIOS',
+                    render: () => (
+                      <span className="font-sans font-bold tracking-wide text-2xl sm:text-3xl text-slate-800/90 select-none">
+                        AXIOS
+                      </span>
+                    )
+                  },
+                  {
+                    name: 'the BUMP',
+                    render: () => (
+                      <div className="flex items-baseline gap-0.5 text-slate-800/90 select-none">
+                        <span className="font-sans font-medium text-xs sm:text-sm lowercase">the</span>
+                        <span className="font-sans font-extrabold text-2xl sm:text-3xl uppercase tracking-tighter">BUMP</span>
+                      </div>
+                    )
+                  },
+                  {
+                    name: 'FINSMES',
+                    render: () => (
+                      <div className="flex items-center gap-2 text-slate-800/90 select-none">
+                        <svg className="w-4 h-4 sm:w-5 sm:h-5 text-slate-800/80" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                          <line x1="6" y1="18" x2="18" y2="6" />
+                          <line x1="12" y1="6" x2="18" y2="6" />
+                          <line x1="18" y1="12" x2="18" y2="6" />
+                        </svg>
+                        <span className="font-sans font-semibold text-lg sm:text-xl tracking-[0.22em]">FINSMES</span>
+                      </div>
+                    )
+                  },
+                  {
+                    name: 'TechCrunch',
+                    render: () => (
+                      <div className="flex items-center gap-2 text-slate-800/90 select-none">
+                        <div className="flex items-center justify-center bg-slate-800/90 text-white font-sans font-black text-xs sm:text-sm leading-none" style={{ width: '22px', height: '22px', borderRadius: '2px', paddingRight: '0.5px' }}>
+                          TC
+                        </div>
+                        <span className="font-sans font-bold text-xl sm:text-2xl tracking-tight">TechCrunch</span>
+                      </div>
+                    )
+                  },
+                  {
+                    name: 'GLAMOUR',
+                    render: () => (
+                      <span className="font-serif font-bold text-2xl sm:text-3xl tracking-wider text-slate-800/90 select-none" style={{ fontFamily: '"Playfair Display", serif' }}>
+                        GLAMOUR
+                      </span>
+                    )
+                  },
+                  {
+                    name: 'NBC',
+                    render: () => (
+                      <div className="flex items-center gap-2 text-slate-800/90 select-none">
+                        <svg className="w-6 h-6 sm:w-7 sm:h-7" viewBox="0 0 100 100" fill="currentColor">
+                          <path d="M50,45 C45,20 30,15 30,15 C30,15 40,25 46,42 Z" opacity="0.5" />
+                          <path d="M50,45 C50,15 42,8 42,8 C42,8 48,18 50,40 Z" opacity="0.85" />
+                          <path d="M50,45 C55,15 62,8 62,8 C62,8 56,18 54,40 Z" opacity="0.85" />
+                          <path d="M50,45 C60,20 75,15 75,15 C75,15 65,25 58,42 Z" opacity="0.5" />
+                          <path d="M50,45 C65,30 80,32 80,32 C80,32 68,36 59,45 Z" opacity="0.4" />
+                          <path d="M50,45 C35,30 20,32 20,32 C20,32 32,36 41,45 Z" opacity="0.4" />
+                          <path d="M50,38 C48,38 47,40 47,43 C47,50 50,56 50,56 C50,56 53,50 53,43 C53,40 52,38 50,38 Z" />
+                        </svg>
+                        <span className="font-sans font-bold text-lg sm:text-xl tracking-wide">NBC</span>
+                      </div>
+                    )
+                  },
+                  {
+                    name: 'FORBES',
+                    render: () => (
+                      <span className="font-serif font-bold tracking-widest text-2xl sm:text-3xl text-slate-800/90 select-none" style={{ fontFamily: '"Playfair Display", serif' }}>
+                        FORBES
+                      </span>
+                    )
+                  },
+                  {
+                    name: 'Bloomberg',
+                    render: () => (
+                      <span className="font-sans font-bold tracking-tight text-2xl sm:text-3xl text-slate-800/90 select-none">
+                        Bloomberg
+                      </span>
+                    )
+                  },
+                  {
+                    name: 'WIRED',
+                    render: () => (
+                      <span className="font-sans font-bold tracking-tighter text-3xl sm:text-4xl text-slate-800/90 select-none" style={{ letterSpacing: '-0.03em' }}>
+                        WIRED
+                      </span>
+                    )
+                  },
+                  {
+                    name: 'THE VERGE',
+                    render: () => (
+                      <div className="flex items-center gap-1.5 text-slate-800/90 select-none">
+                        <svg className="w-4 h-4 sm:w-5 sm:h-5 text-slate-800/80" viewBox="0 0 24 24" fill="currentColor">
+                          <polygon points="12,2 22,22 2,22" />
+                        </svg>
+                        <span className="font-sans font-bold tracking-tight text-xl sm:text-2xl uppercase">
+                          THE VERGE
+                        </span>
+                      </div>
+                    )
+                  }
                 ].map((partner, i) => (
                   <div
                     key={`${setIndex}-${i}`}
-                    className="flex-shrink-0 group cursor-pointer"
+                    className="flex-shrink-0 mx-6 sm:mx-8 flex items-center justify-center"
                   >
-                    <div
-                      className="flex items-center justify-center rounded-2xl transition-all duration-300 group-hover:scale-[1.06]"
-                      style={{
-                        width: '160px',
-                        height: '100px',
-                        background: 'rgba(255, 255, 255, 0.7)',
-                        backdropFilter: 'blur(12px)',
-                        WebkitBackdropFilter: 'blur(12px)',
-                        border: '1px solid rgba(0, 0, 0, 0.06)',
-                        boxShadow: '0 8px 30px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
-                        padding: '16px',
-                      }}
-                    >
-                      <img
-                        src={partner.src}
-                        alt={partner.name}
-                        className="max-w-full max-h-full object-contain transition-all duration-300 group-hover:brightness-110"
-                        style={{ filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.15))' }}
-                        loading="lazy"
-                      />
-                    </div>
+                    {partner.render()}
                   </div>
                 ))}
               </div>
             ))}
           </div>
-        </motion.div>
-      </section>
+        </div>
+      </div>
+
+      {/* ===== Case Studies Section ===== */}
+      <CaseStudiesSection />
+
+      {/* ===== About Section ===== */}
+      <AboutSection />
+
+      {/* ===== Footer Section ===== */}
+      <Footer onOpenModal={() => setIsModalOpen(true)} />
+
+      {/* Sleek Glassmorphic Lead Inquiry Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            onClick={() => setIsModalOpen(false)}
+            className="absolute inset-0 bg-[#0c0817]/80 backdrop-blur-md cursor-pointer"
+          />
+
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ type: "spring", duration: 0.5 }}
+            className="relative w-full max-w-md bg-[#12101f]/90 border border-white/10 rounded-3xl p-8 shadow-2xl z-10 overflow-hidden text-left"
+          >
+            <div className="absolute -right-16 -top-16 w-36 h-36 bg-purple-600/20 blur-[30px] rounded-full pointer-events-none" />
+            <div className="absolute -left-16 -bottom-16 w-36 h-36 bg-pink-600/20 blur-[30px] rounded-full pointer-events-none" />
+
+            <button
+              onClick={() => setIsModalOpen(false)}
+              className="absolute top-4 right-4 text-white/50 hover:text-white transition-colors p-2 cursor-pointer"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            {!formSubmitted ? (
+              <form onSubmit={(e) => {
+                e.preventDefault();
+                setFormSubmitted(true);
+              }} className="space-y-4 relative z-10">
+                <div>
+                  <span className="text-[10px] font-bold tracking-widest text-purple-400 uppercase">
+                    Get Started
+                  </span>
+                  <h3 className="font-serif text-2xl font-semibold text-white mt-1">
+                    Let's build your brand
+                  </h3>
+                  <p className="text-white/60 text-xs mt-1">
+                    Fill in your details below and our production team will get in touch.
+                  </p>
+                </div>
+
+                <div className="space-y-3">
+                  <div>
+                    <label className="block text-[10px] font-bold text-white/60 uppercase tracking-wider mb-1">
+                      Your Name *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={formData.name}
+                      onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                      placeholder="Jane Doe"
+                      className="w-full h-10 px-4 rounded-xl border border-white/10 bg-white/5 text-xs text-white focus:outline-none focus:border-purple-500 focus:bg-white/[0.08] transition-all"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] font-bold text-white/60 uppercase tracking-wider mb-1">
+                      Email Address *
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      value={formData.email}
+                      onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                      placeholder="jane@company.com"
+                      className="w-full h-10 px-4 rounded-xl border border-white/10 bg-white/5 text-xs text-white focus:outline-none focus:border-purple-500 focus:bg-white/[0.08] transition-all"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] font-bold text-white/60 uppercase tracking-wider mb-1">
+                      Service of Interest
+                    </label>
+                    <select
+                      value={formData.service}
+                      onChange={(e) => setFormData(prev => ({ ...prev, service: e.target.value }))}
+                      className="w-full h-10 px-4 rounded-xl border border-white/10 bg-[#12101f] text-xs text-white focus:outline-none focus:border-purple-500 transition-all cursor-pointer"
+                    >
+                      {SERVICES.map((service, idx) => (
+                        <option key={idx} value={service.title} className="bg-[#12101f]">
+                          {service.title}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] font-bold text-white/60 uppercase tracking-wider mb-1">
+                      Brief Project Notes *
+                    </label>
+                    <textarea
+                      required
+                      rows={3}
+                      value={formData.message}
+                      onChange={(e) => setFormData(prev => ({ ...prev, message: e.target.value }))}
+                      placeholder="Tell us what you'd like to achieve..."
+                      className="w-full px-4 py-2.5 rounded-xl border border-white/10 bg-white/5 text-xs text-white focus:outline-none focus:border-purple-500 focus:bg-white/[0.08] transition-all resize-none"
+                    />
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full h-11 rounded-xl text-[10px] font-bold tracking-wider text-white uppercase bg-gradient-to-r from-purple-600 via-purple-500 to-pink-500 hover:from-purple-500 hover:to-pink-400 border border-white/10 shadow-[0_4px_20px_rgba(168,85,247,0.2)] hover:shadow-[0_4px_25px_rgba(168,85,247,0.35)] active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer mt-2"
+                >
+                  Submit Inquiry
+                </button>
+              </form>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="text-center py-6 flex flex-col items-center justify-center relative z-10"
+              >
+                <div className="w-12 h-12 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 mb-4 animate-bounce">
+                  <Check className="w-5 h-5" />
+                </div>
+                <h3 className="font-serif text-xl font-semibold text-white mb-2">
+                  Thank you, {formData.name}!
+                </h3>
+                <p className="text-white/60 text-xs max-w-sm mx-auto mb-6">
+                  We have received your inquiry about <span className="text-purple-300 font-semibold">{formData.service}</span>. Our production team will contact you within 24 hours.
+                </p>
+                <button
+                  onClick={() => setIsModalOpen(false)}
+                  className="px-6 py-2 rounded-full border border-white/10 text-white/80 hover:text-white hover:bg-white/5 text-[10px] font-bold tracking-wider uppercase transition-all duration-300 cursor-pointer"
+                >
+                  Dismiss
+                </button>
+              </motion.div>
+            )}
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 }

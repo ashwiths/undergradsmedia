@@ -161,6 +161,7 @@ body {
   0% {
     transform: translateX(0);
   }
+
   100% {
     transform: translateX(-50%);
   }
@@ -169,9 +170,610 @@ body {
 .marquee-track {
   display: flex;
   width: max-content;
-  animation: marquee-scroll 28s linear infinite;
+  flex-shrink: 0;
+  animation: marquee-scroll 38s linear infinite;
 }
 
 .marquee-wrapper:hover .marquee-track {
   animation-play-state: paused;
+}
+
+/* Custom Mockup Animations */
+@keyframes sound-wave {
+
+  0%,
+  100% {
+    height: 12px;
+  }
+
+  50% {
+    height: 36px;
+  }
+}
+
+.wave-bar {
+  animation: sound-wave 1.2s ease-in-out infinite;
+}
+
+.wave-bar:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.wave-bar:nth-child(3) {
+  animation-delay: 0.2s;
+}
+
+.wave-bar:nth-child(4) {
+  animation-delay: 0.3s;
+}
+
+.wave-bar:nth-child(5) {
+  animation-delay: 0.4s;
+}
+
+.wave-bar:nth-child(6) {
+  animation-delay: 0.5s;
+}
+
+.wave-bar:nth-child(7) {
+  animation-delay: 0.25s;
+}
+
+.wave-bar:nth-child(8) {
+  animation-delay: 0.15s;
+}
+
+.wave-bar:nth-child(9) {
+  animation-delay: 0.35s;
+}
+
+.wave-bar:nth-child(10) {
+  animation-delay: 0.45s;
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.5;
+  }
+
+  50% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
+
+  100% {
+    transform: scale(0.95);
+    opacity: 0.5;
+  }
+}
+
+.glow-ring {
+  animation: pulse-ring 3s ease-in-out infinite;
+}
+
+@keyframes slow-rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-slow-rotate {
+  animation: slow-rotate 20s linear infinite;
+}
+
+/* Gold Theme Utilities */
+.gold-icon-container {
+  background: radial-gradient(135deg, rgba(212, 163, 89, 0.12) 0%, rgba(139, 92, 26, 0.04) 100%);
+  border: 1px solid rgba(212, 163, 89, 0.25);
+  box-shadow: 0 0 15px rgba(212, 163, 89, 0.05);
+}
+
+.gold-icon-container:hover {
+  border-color: rgba(212, 163, 89, 0.5);
+  box-shadow: 0 0 20px rgba(212, 163, 89, 0.15);
+}
+
+.service-card-active {
+  border-color: rgba(212, 163, 89, 0.4) !important;
+  background: rgba(212, 163, 89, 0.05) !important;
+}
+
+/* Service Mockup Sliders & Custom Graph Animations */
+@keyframes slide-exposure {
+
+  0%,
+  100% {
+    left: 20%;
+  }
+
+  50% {
+    left: 80%;
+  }
+}
+
+.animate-exposure-slider {
+  animation: slide-exposure 4s ease-in-out infinite;
+}
+
+@keyframes draw-graph {
+  0% {
+    stroke-dashoffset: 600;
+  }
+
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+.animate-draw-graph {
+  stroke-dasharray: 600;
+  animation: draw-graph 3s ease-out forwards;
+}
+
+/* ===== Rebuilt Services Section ===== */
+
+/* Responsive grid: 4 col desktop, 2 col tablet, 1 col mobile */
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  width: 100%;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  background: transparent;
+}
+
+@media (max-width: 1024px) {
+  .services-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .services-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Service card — sharp borders, glassmorphism blur-transparent */
+.service-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 220px;
+  max-height: 260px;
+  padding: 32px;
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Hover background image layer */
+.service-card-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transform: scale(1.06);
+  z-index: 1;
+  transition: opacity 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.service-card:hover .service-card-bg {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Hover background overlay layer */
+.service-card-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(12, 8, 23, 0.78);
+  opacity: 0;
+  z-index: 2;
+  transition: opacity 0.45s ease;
+}
+
+.service-card:hover .service-card-overlay {
+  opacity: 1;
+}
+
+/* Card Content wrapper */
+.service-card-content {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  width: 100%;
+  flex: 1;
+}
+
+/* Number */
+.service-card-number {
+  font-size: 56px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.85);
+  line-height: 1;
+  transition: color 0.4s ease;
+}
+
+.service-card:hover .service-card-number {
+  color: #ffffff;
+}
+
+/* Middle content wrapper */
+.service-card-middle {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 16px 0;
+}
+
+/* Badge */
+.service-card-badge {
+  display: inline-block;
+  width: fit-content;
+  padding: 5px 12px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.85);
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 100px;
+  transition: color 0.4s ease, border-color 0.4s ease;
+}
+
+.service-card:hover .service-card-badge {
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+/* Description */
+.service-card-description {
+  font-size: 15px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.5);
+  transition: color 0.4s ease;
+}
+
+.service-card:hover .service-card-description {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/* Bottom Row */
+.service-card-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+/* Icon */
+.service-card-icon {
+  color: rgba(255, 255, 255, 0.85);
+  display: flex;
+  align-items: center;
+  transition: color 0.4s ease, transform 0.4s ease;
+}
+
+.service-card:hover .service-card-icon {
+  color: #ffffff;
+  transform: scale(1.1);
+}
+
+/* Arrow */
+.service-card-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.85);
+  transition: background-color 0.4s ease, border-color 0.4s ease, color 0.4s ease, transform 0.4s ease;
+}
+
+.service-card:hover .service-card-arrow {
+  background-color: #ffffff;
+  border-color: #ffffff;
+  color: #000000;
+  transform: rotate(-45deg);
+}
+
+/* Responsive container padding */
+@media (max-width: 1024px) {
+
+  #services>div:first-of-type+div,
+  #services .relative.z-10 {
+    padding-left: 24px !important;
+    padding-right: 24px !important;
+  }
+}
+
+@media (max-width: 640px) {
+
+  #services>div:first-of-type+div,
+  #services .relative.z-10 {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+
+  .service-card {
+    max-height: none;
+    min-height: 240px;
+  }
+}
+
+/* ===== Case Studies Section — Premium Refinements ===== */
+
+/* Bento / Masonry Grid: Row 1 = 65%/35%, Row 2 = 35%/65% */
+.case-studies-grid {
+  display: grid;
+  grid-template-columns: 1.85fr 1fr;
+  grid-template-rows: 440px 440px;
+  grid-template-areas:
+    "large1 small1"
+    "small2 large2";
+  gap: 32px;
+  width: 100%;
+}
+
+.case-studies-grid>*:nth-child(1) {
+  grid-area: large1;
+}
+
+.case-studies-grid>*:nth-child(2) {
+  grid-area: small1;
+}
+
+.case-studies-grid>*:nth-child(3) {
+  grid-area: small2;
+}
+
+.case-studies-grid>*:nth-child(4) {
+  grid-area: large2;
+}
+
+
+.case-study-card {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  cursor: pointer;
+  will-change: transform, box-shadow;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.case-study-card:hover {
+  transform: scale(1.02) translateY(-6px);
+  box-shadow:
+    0 28px 64px rgba(139, 92, 246, 0.22),
+    0 0 40px rgba(168, 85, 247, 0.08),
+    0 0 0 1px rgba(168, 85, 247, 0.12);
+}
+
+/* Image */
+.case-study-image-wrapper {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.case-study-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  will-change: transform, filter;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+    filter 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.case-study-card:hover .case-study-image {
+  transform: scale(1.05);
+  filter: brightness(1.08);
+}
+
+/* Overlay gradient — reduced darkness by ~12% */
+.case-study-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top,
+      rgba(12, 8, 23, 0.82) 0%,
+      rgba(12, 8, 23, 0.48) 40%,
+      rgba(12, 8, 23, 0.12) 70%,
+      transparent 100%);
+  transition: background 0.4s ease;
+  pointer-events: none;
+}
+
+.case-study-card:hover .case-study-overlay {
+  background: linear-gradient(to top,
+      rgba(12, 8, 23, 0.88) 0%,
+      rgba(12, 8, 23, 0.55) 45%,
+      rgba(12, 8, 23, 0.18) 75%,
+      transparent 100%);
+}
+
+/* Content */
+.case-study-content {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 32px;
+}
+
+/* Tags */
+.case-study-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.case-study-tag {
+  display: inline-block;
+  padding: 5px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 100px;
+  transition: all 0.3s ease;
+}
+
+.case-study-card:hover .case-study-tag {
+  background: rgba(168, 85, 247, 0.15);
+  border-color: rgba(168, 85, 247, 0.3);
+  color: #d8b4fe;
+}
+
+/* Title */
+.case-study-title {
+  font-weight: 600;
+  font-size: clamp(18px, 2.2vw, 24px);
+  color: #fff;
+  line-height: 1.25;
+  margin-bottom: 8px;
+  transition: color 0.3s ease;
+}
+
+/* Description — reveals on hover */
+.case-study-description {
+  font-size: 15px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.4);
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.4s ease, opacity 0.4s ease, color 0.3s ease;
+  margin-bottom: 0;
+}
+
+.case-study-card:hover .case-study-description {
+  max-height: 120px;
+  opacity: 1;
+  color: rgba(255, 255, 255, 0.65);
+  margin-bottom: 16px;
+}
+
+/* CTA Button — enhanced with glow, scale, lift */
+.case-study-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 22px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: #fff;
+  background: rgba(168, 85, 247, 0.2);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  border-radius: 100px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  width: fit-content;
+  margin-top: 12px;
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.case-study-card:hover .case-study-cta {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.case-study-cta:hover {
+  background: rgba(168, 85, 247, 0.35);
+  border-color: rgba(168, 85, 247, 0.5);
+  box-shadow: 0 6px 28px rgba(168, 85, 247, 0.35),
+    0 0 16px rgba(168, 85, 247, 0.15);
+  transform: translateY(-2px) scale(1.03);
+}
+
+.case-study-cta:active {
+  transform: translateY(0) scale(0.97);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .case-studies-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    grid-template-areas:
+      "large1"
+      "small1"
+      "small2"
+      "large2";
+  }
+
+  .case-studies-grid>*:nth-child(1),
+  .case-studies-grid>*:nth-child(2),
+  .case-studies-grid>*:nth-child(3),
+  .case-studies-grid>*:nth-child(4) {
+    min-height: 320px;
+  }
+
+  .case-study-content {
+    padding: 20px;
+  }
+
+  .case-study-description {
+    max-height: none;
+    opacity: 1;
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: 12px;
+  }
+
+  .case-study-cta {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Organic Morphing Blob Frame */
+.blob-frame {
+  border-radius: 60% 40% 55% 45% / 45% 55% 45% 55%;
+  animation: blob-bounce 8s ease-in-out infinite alternate;
+}
+
+@keyframes blob-bounce {
+  0% {
+    border-radius: 60% 40% 55% 45% / 45% 55% 45% 55%;
+  }
+  50% {
+    border-radius: 50% 50% 40% 60% / 55% 40% 60% 45%;
+  }
+  100% {
+    border-radius: 40% 60% 35% 65% / 35% 60% 40% 65%;
+  }
 }
